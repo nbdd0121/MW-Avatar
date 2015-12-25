@@ -1,0 +1,4 @@
+{
+	"extavatar_desc": "这个插件提供了外部链接的头像功能。Special:Avatar/用户名 会被重定向到用户设置中设置的头像地质。",
+	"pref-avatar-url": "头像的URL："
+}

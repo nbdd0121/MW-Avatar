@@ -1,0 +1,4 @@
+{
+	"extavatar_desc": "This extension provides an avatar feature that uses external image storage. Special:Avatar/Username will be redirected to your avatar url in preference.",
+	"pref-avatar-url": "URL of avatar:"
+}

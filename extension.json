@@ -1,0 +1,33 @@
+{
+	"name": "ExtAvatar",
+	"author": "Gary Guo",
+	"url": "https://github.com/nbdd0121/MW-Avatar",
+	"descriptionmsg": "extavatar_desc",
+	"version": "0.1.0",
+	"license-name": "BSD-2-Clause",
+	"type": "specialpage",
+	"MessagesDirs": {
+		"Extvatar": [
+			"i18n"
+		]
+	},
+	"AutoloadClasses": {
+		"Avatar": "Avatar_body.php",
+		"SpecialAvatar": "SpecialAvatar.php"
+	},
+	"Hooks": {
+		"GetPreferences": "Avatar::onGetPreferences"
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "",
+		"remoteExtPath": "ExtAvatar"
+	},
+	"SpecialPages": {
+		"Avatar": "SpecialAvatar"
+	},
+	"config": {
+		"DefaultAvatar": "http://static.mengniang.org/common/f/f2/645f3c7fgw1eszwigytqmj20m80m8whl.jpg",
+		"ExtAvatar": true
+	},
+	"manifest_version": 1
+}
