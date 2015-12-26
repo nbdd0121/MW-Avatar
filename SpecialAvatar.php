@@ -27,10 +27,6 @@ class SpecialAvatar extends SpecialPage {
  		$response->header('Location: ' . $path);
 	}
 
-	public function isCached() {
-		return true;
-	}
-
 	public function isListed() {
 		return false;
 	}
