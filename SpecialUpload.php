@@ -75,7 +75,9 @@ class SpecialUpload extends \SpecialPage {
 		$request = $this->getRequest();
 
 		if ($request->wasPosted()) {
-			$this->processUpload();
+			if ($this->processUpload()) {
+				$this->getOutput()->redirect(\SpecialPage::getTitleFor('Preferences')->getLinkURL());
+			}
 		} else {
 			$this->displayMessage('');
 		}
@@ -91,7 +93,7 @@ class SpecialUpload extends \SpecialPage {
 		$dataurl = $request->getVal('avatar');
 		if (!$dataurl || parse_url($dataurl, PHP_URL_SCHEME) !== 'data') {
 			$this->displayMessage($this->msg('avatar-notuploaded'));
-			return;
+			return false;
 		}
 
 		$img = new AvatarProcessor($dataurl);
@@ -105,25 +107,25 @@ class SpecialUpload extends \SpecialPage {
 			break;
 		default:
 			$this->displayMessage($this->msg('avatar-invalid'));
-			return;
+			return false;
 		}
 
 		// Must be square
 		if ($img->width !== $img->height) {
 			$this->displayMessage($this->msg('avatar-notsquare'));
-			return;
+			return false;
 		}
 
 		// Check if image is too small
 		if ($img->width < 32 || $img->height < 32) {
 			$this->displayMessage($this->msg('avatar-toosmall'));
-			return;
+			return false;
 		}
 
 		// Check if image is too big
 		if ($img->width > $wgMaxAvatarResolution || $img->height > $wgMaxAvatarResolution) {
 			$this->displayMessage($this->msg('avatar-toolarge'));
-			return;
+			return false;
 		}
 
 		// Avatar directories
@@ -141,11 +143,12 @@ class SpecialUpload extends \SpecialPage {
 		}
 
 		$this->displayMessage($this->msg('avatar-saved'));
-		return;
+		return true;
 	}
 
 	public function displayForm() {
-		$html = \Html::hidden('avatar', '');
+		$html .= '<p></p>';
+		$html .= \Html::hidden('avatar', '');
 		$html .= \Html::hidden('title', $this->getTitle());
 
 		$html .= \Xml::element('button', array('id' => 'pickfile'), $this->msg('avatarupload-selectfile'));
@@ -158,6 +161,7 @@ class SpecialUpload extends \SpecialPage {
 		// Wrap with a form
 		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'post'), $html);
 
+		$this->getOutput()->addWikiMsg('clearyourcache');
 		$this->getOutput()->addHTML($html);
 	}
 
