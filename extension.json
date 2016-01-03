@@ -1,33 +1,47 @@
 {
-	"name": "ExtAvatar",
+	"name": "Avatar",
 	"author": "Gary Guo",
 	"url": "https://github.com/nbdd0121/MW-Avatar",
-	"descriptionmsg": "extavatar_desc",
+	"descriptionmsg": "avatar_desc",
 	"version": "0.1.0",
 	"license-name": "BSD-2-Clause",
 	"type": "specialpage",
 	"MessagesDirs": {
-		"Extvatar": [
+		"Avatar": [
 			"i18n"
 		]
 	},
-	"AutoloadClasses": {
-		"Avatar": "Avatar_body.php",
-		"SpecialAvatar": "SpecialAvatar.php"
-	},
 	"Hooks": {
-		"GetPreferences": "Avatar::onGetPreferences"
+		"GetPreferences": "Avatar\\Avatar::onGetPreferences"
+	},
+	"ResourceModules": {
+		"ext.avatar.upload": {
+			"scripts":[
+				"assets/upload.js"
+			],
+			"styles":[
+				"assets/upload.css"
+			]
+		}
+	},
+	"AutoloadClasses": {
+		"Avatar\\Avatar": "Avatar_body.php",
+		"Avatar\\SpecialUpload": "SpecialUpload.php",
+		"Avatar\\SpecialAvatar": "SpecialAvatar.php"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
-		"remoteExtPath": "ExtAvatar"
+		"remoteExtPath": "Avatar"
 	},
 	"SpecialPages": {
-		"Avatar": "SpecialAvatar"
+		"AvatarUpload": "Avatar\\SpecialUpload",
+		"Avatar": "Avatar\\SpecialAvatar"
 	},
 	"config": {
 		"DefaultAvatar": "http://static.mengniang.org/common/f/f2/645f3c7fgw1eszwigytqmj20m80m8whl.jpg",
-		"ExtAvatar": true
+		"AvatarThumbRes": [32, 64, 128, 256], 
+		"MaxAvatarResolution": 256,
+		"DefaultAvatarRes": 128
 	},
 	"manifest_version": 1
 }

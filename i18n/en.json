@@ -1,4 +1,8 @@
 {
-	"extavatar_desc": "This extension provides an avatar feature that uses external image storage. Special:Avatar/Username will be redirected to your avatar url in preference.",
-	"pref-avatar-url": "URL of avatar:"
+	"avatar_desc": "This extension provides an avatar system that can be used for other extensions",
+	"avatarupload": "Upload Avatar",
+	"avatarupload-submit": "Upload Avatar",
+	"avatarupload-selectfile": "Select File",
+	"prefs-editavatar": "Avatar: "
+
 }

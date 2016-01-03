@@ -1,0 +1,57 @@
+.cropper-container {
+	overflow: hidden;
+	font-size: 0px;
+	position: relative;
+	height: 400px;
+	width: 400px;
+	border: solid 1px black;
+}
+
+.cropper-container[disabled] {
+	visibility: hidden;
+	position: absolute;
+}
+
+.cropper-container img {
+}
+
+.cropper {
+	position: absolute;
+	outline: solid rgba(0, 0, 0, 0.6) 1000px;
+	left: 0px;
+	top: 0px;
+	height: 100px;
+	width: 100px;
+	cursor: move;
+	border: 1px solid black;
+	z-index: 1;
+}
+
+.tl-resizer, .tr-resizer, .bl-resizer, .br-resizer {
+	position: absolute;
+	height: 6px;
+	width: 6px;
+	background: white;
+	border: 1px solid black;
+}
+
+.tl-resizer {
+	left: -3px;
+	top: -3px;
+	cursor: nwse-resize;
+}
+.tr-resizer {
+	right: -3px;
+	top: -3px;
+	cursor: nesw-resize;
+}
+.bl-resizer {
+	left: -3px;
+	bottom: -3px;
+	cursor: nesw-resize;
+}
+.br-resizer {
+	right: -3px;
+	bottom: -3px;
+	cursor: nwse-resize;
+}
