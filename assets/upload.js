@@ -4,10 +4,7 @@ var minDimension = 64;
 var multiplier = 1;
 var minVisualDim;
 
-var fixLeft = false;
-var fixRight = false;
-var fixTop = false;
-var fixBottom = false;
+var dragMode = 0;
 
 var visualHeight;
 var visualWidth;
@@ -40,6 +37,16 @@ function normalizeBound(inner, outer) {
   }
   if (inner.top + inner.height > outer.top + outer.height) {
     inner.top = outer.top + outer.height - inner.height;
+  }
+}
+
+function normalizeRange(pt, min, max) {
+  if (pt < min) {
+    return min;
+  } else if (pt > max) {
+    return max;
+  } else {
+    return pt;
   }
 }
 
@@ -95,6 +102,7 @@ function onDragStart(event) {
   startX = event.pageX;
   startY = event.pageY;
   event.preventDefault();
+  event.stopPropagation();
 
   $('body').on('mousemove', onDrag).on('mouseup', onDragEnd);
 }
@@ -112,65 +120,62 @@ function onDrag(event) {
   var deltaX = point.left - startX;
   var deltaY = point.top - startY;
 
-  if (fixLeft && fixTop) {
-    deltaX = deltaY = Math.max(deltaX, deltaY);
-  } else if (fixRight && fixBottom) {
-    deltaX = deltaY = Math.min(deltaX, deltaY);
-  } else if (fixLeft && fixBottom) {
-    deltaY = -(deltaX = Math.max(deltaX, -deltaY));
-  } else if (fixRight && fixTop) {
-    deltaY = -(deltaX = Math.min(deltaX, -deltaY));
+  // All min, max below uses X direction as positive
+  switch(dragMode) {
+    case 0:
+      bound.left = startOffset.left + deltaX;
+      bound.top = startOffset.top + deltaY;
+      normalizeBound(bound, outer);
+      break;
+    case 1:
+      var min = -Math.min(startOffset.left - outer.left, startOffset.top - outer.top);
+      var max = startOffset.width - minDimension;
+      deltaX = deltaY = normalizeRange(Math.min(deltaX, deltaY), min, max);
+      bound.width = startOffset.width - deltaX;
+      bound.left = startOffset.left + startOffset.width - bound.width;
+      bound.height = startOffset.height - deltaY;
+      bound.top = startOffset.top + startOffset.height - bound.height;
+      break;
+    case 2:
+      var min = minDimension - startOffset.width;
+      var max = Math.min(
+        outer.left + outer.width - startOffset.left - startOffset.width,
+        startOffset.top - outer.top
+      );
+      deltaY = -(deltaX = normalizeRange(Math.max(deltaX, -deltaY), min, max));
+      bound.width = startOffset.width + deltaX;
+      bound.height = startOffset.height - deltaY;
+      bound.top = startOffset.top + startOffset.height - bound.height;
+      break;
+    case 3:
+      var min = -Math.min(
+        startOffset.left - outer.left,
+        outer.top + outer.height - startOffset.top - startOffset.height
+      );
+      var max = startOffset.width - minDimension;
+      deltaY = -(deltaX = normalizeRange(Math.min(deltaX, -deltaY), min, max));
+      bound.width = startOffset.width - deltaX;
+      bound.left = startOffset.left + startOffset.width - bound.width;
+      bound.height = startOffset.height + deltaY;
+      break;
+    case 4:
+      var min = minDimension - startOffset.width;
+      var max = Math.min(
+        outer.left + outer.width - startOffset.left - startOffset.width,
+        outer.top + outer.height - startOffset.top - startOffset.height
+      );
+      deltaX = deltaY = normalizeRange(Math.max(deltaX, deltaY), min, max);
+      bound.width = startOffset.width + deltaX;
+      bound.height = startOffset.height + deltaY;
+      break;
   }
 
-  if (fixLeft) {
-    bound.width = startOffset.width + deltaX;
-    if (bound.width < minVisualDim) {
-      bound.width = minVisualDim;
-    } else if (bound.width > outer.width) {
-      bound.width = outer.width;
-    }
-  } else if (fixRight) {
-    bound.width = startOffset.width - deltaX;
-    if (bound.width < minVisualDim) {
-      bound.width = minVisualDim;
-    } else if (bound.width > outer.width) {
-      bound.width = outer.width;
-    }
-    bound.left = startOffset.left + startOffset.width - bound.width;
-  } else {
-    bound.left = startOffset.left + deltaX;
-  }
-
-  if (fixTop) {
-    bound.height = startOffset.height + deltaY;
-    if (bound.height < minVisualDim) {
-      bound.height = minVisualDim;
-    } else if (bound.height > outer.height) {
-      bound.height = outer.height;
-    }
-  } else if (fixBottom) {
-    bound.height = startOffset.height - deltaY;
-    if (bound.height < minVisualDim) {
-      bound.height = minVisualDim;
-    } else if (bound.height > outer.height) {
-      bound.height = outer.height;
-    }
-    bound.top = startOffset.top + startOffset.height - bound.height;
-  } else {
-    bound.top = startOffset.top + deltaY;
-  }
-
-  normalizeBound(bound, outer);
   setBound(selector, bound);
   event.preventDefault();
 }
 
 function onDragEnd(event) {
   $('body').off('mousemove', onDrag).off('mouseup', onDragEnd);
-  fixLeft = false;
-  fixRight = false;
-  fixTop = false;
-  fixBottom = false;
   event.preventDefault();
 
   updateHidden();
@@ -226,27 +231,25 @@ function onImageLoadingFailed() {
   return;
 }
 
-
 // Event registration
-selector.on('mousedown', onDragStart);
+selector.on('mousedown', function(event) {
+  dragMode = 0;
+  onDragStart(event);
+});
 selector.find('.tl-resizer').on('mousedown', function(event) {
-  fixRight = true;
-  fixBottom = true;
+  dragMode = 1;
   onDragStart(event);
 });
 selector.find('.tr-resizer').on('mousedown', function(event) {
-  fixLeft = true;
-  fixBottom = true;
+  dragMode = 2;
   onDragStart(event);
 });
 selector.find('.bl-resizer').on('mousedown', function(event) {
-  fixRight = true;
-  fixTop = true;
+  dragMode = 3;
   onDragStart(event);
 });
 selector.find('.br-resizer').on('mousedown', function(event) {
-  fixLeft = true;
-  fixTop = true;
+  dragMode = 4;
   onDragStart(event);
 });
 
