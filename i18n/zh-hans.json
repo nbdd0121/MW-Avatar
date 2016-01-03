@@ -3,5 +3,10 @@
 	"avatarupload": "上传头像",
 	"avatarupload-submit": "上传头像",
 	"avatarupload-selectfile": "选择文件",
-	"prefs-editavatar": "头像："
+	"prefs-editavatar": "头像：",
+	"avatar-notuploaded": "没有头像被上传",
+	"avatar-invalid": "图像格式不合法",
+	"avatar-notsquare": "上传的图像不是方的",
+	"avatar-toosmall": "上传的图像太小了",
+	"avatar-toolarge": "上传的图像太大了"
 }

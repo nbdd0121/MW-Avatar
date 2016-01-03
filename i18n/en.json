@@ -3,6 +3,10 @@
 	"avatarupload": "Upload Avatar",
 	"avatarupload-submit": "Upload Avatar",
 	"avatarupload-selectfile": "Select File",
-	"prefs-editavatar": "Avatar: "
-
+	"prefs-editavatar": "Avatar: ",
+	"avatar-notuploaded": "No avatar is uploaded",
+	"avatar-invalid": "Image format is not valid",
+	"avatar-notsquare": "Uploaded image is not square",
+	"avatar-toosmall": "Uploaded image is too small",
+	"avatar-toolarge": "Uploaded image is too large"
 }

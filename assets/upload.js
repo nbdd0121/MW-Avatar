@@ -9,6 +9,9 @@ var fixRight = false;
 var fixTop = false;
 var fixBottom = false;
 
+var visualHeight;
+var visualWidth;
+
 var maxRes = mw.config.get('wgMaxAvatarResolution');
 
 var startOffset;
@@ -22,6 +25,7 @@ var imageObj = $('<img src=""></img>');
 var selector = $('<div class="cropper"><div class="tl-resizer"/><div class="tr-resizer"/><div class="bl-resizer"/><div class="br-resizer"/></div>');
 var hiddenField = $('[name=avatar]');
 var pickfile = $('#pickfile');
+var errorMsg = $('#errorMsg');
 
 // Helper function to limit the selection clip
 function normalizeBound(inner, outer) {
@@ -55,15 +59,15 @@ function setBound(obj, bound) {
 
 function cropImage(image, x, y, dim, targetDim) {
   if (dim > 2 * targetDim) {
-  	var crop = cropImage(image, x, y, dim, 2 * targetDim);
+    var crop = cropImage(image, x, y, dim, 2 * targetDim);
     return cropImage(crop, 0, 0, 2 * targetDim, targetDim);
   } else {
     var buffer = $('<canvas/>')
-    	.attr('width', targetDim)
-    	.attr('height', targetDim)[0];
+      .attr('width', targetDim)
+      .attr('height', targetDim)[0];
     buffer
-    	.getContext('2d')
-    	.drawImage(image, x, y, dim, dim, 0, 0, targetDim, targetDim);
+      .getContext('2d')
+      .drawImage(image, x, y, dim, dim, 0, 0, targetDim, targetDim);
     return buffer;
   }
 }
@@ -72,13 +76,15 @@ function cropImage(image, x, y, dim, targetDim) {
 function updateHidden() {
   var bound = getBound(selector);
   var outer = getBound(container);
-  var dim = Math.round(bound.width * multiplier);
+  // When window is zoomed,
+  // width set != width get, so we do some nasty trick here to counter the effect
+  var dim = Math.round((bound.width - container.width() + visualWidth) * multiplier);
   var res = dim;
   if (res > maxRes) {
     res = maxRes;
   }
-  var image = cropImage(imageObj[0], 
-  	(bound.left - outer.left) * multiplier,
+  var image = cropImage(imageObj[0],
+    (bound.left - outer.left) * multiplier,
     (bound.top - outer.top) * multiplier,
     dim, res)
   hiddenField.val(image.toDataURL());
@@ -175,17 +181,19 @@ function onImageLoaded() {
   var height = imageObj.height();
 
   if (width < minDimension || height < minDimension) {
-    alert("Selected image is too small");
+    errorMsg.text(mw.msg('avatar-toosmall'));
     imageObj.attr('src', '');
     container.attr('disabled', '');
     submitButton.attr('disabled', '');
     return;
   }
 
+  errorMsg.text(mw.msg(''));
+
   container.removeAttr('disabled');
   submitButton.removeAttr('disabled');
-  var visualWidth = width,
-    visualHeight = height;
+  visualHeight = height;
+  visualWidth = width;
 
   if (visualHeight > maxVisualHeight) {
     visualHeight = maxVisualHeight;
@@ -205,6 +213,19 @@ function onImageLoaded() {
   setBound(selector, bound);
   updateHidden();
 }
+
+function onImageLoadingFailed() {
+  if(!imageObj.attr('src')) {
+    return;
+  }
+
+  errorMsg.text(mw.msg('avatar-invalid'));
+  imageObj.attr('src', '');
+  container.attr('disabled', '');
+  submitButton.attr('disabled', '');
+  return;
+}
+
 
 // Event registration
 selector.on('mousedown', onDragStart);
@@ -244,8 +265,11 @@ pickfile.click(function(event) {
   });
   picker.click();
   event.preventDefault();
-})
-imageObj.on('load', onImageLoaded);
+});
+
+imageObj
+  .on('load', onImageLoaded)
+  .on('error', onImageLoadingFailed);
 
 
 // UI modification

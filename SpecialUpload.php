@@ -76,19 +76,21 @@ class SpecialUpload extends \SpecialPage {
 
 		if ($request->wasPosted()) {
 			$this->processUpload();
+		} else {
+			$this->displayMessage('');
 		}
 		$this->displayForm();
 	}
 
-	private function displayError($msg) {
-		$this->getOutput()->addHTML(\Html::rawElement('div', array('class' => 'error'), $msg));
+	private function displayMessage($msg) {
+		$this->getOutput()->addHTML(\Html::rawElement('div', array('class' => 'error', 'id' => 'errorMsg'), $msg));
 	}
 
 	private function processUpload() {
 		$request = $this->getRequest();
 		$dataurl = $request->getVal('avatar');
 		if (!$dataurl) {
-			$this->displayError('No avatar uploaded');
+			$this->displayMessage($this->msg('avatar-notuploaded'));
 			return;
 		}
 
@@ -102,25 +104,25 @@ class SpecialUpload extends \SpecialPage {
 		case IMAGETYPE_JPEG:
 			break;
 		default:
-			$this->displayError('Invalid image format');
+			$this->displayMessage($this->msg('avatar-invalid'));
 			return;
 		}
 
 		// Must be square
 		if ($img->width !== $img->height) {
-			$this->displayError('Image must be square');
+			$this->displayMessage($this->msg('avatar-notsquare'));
 			return;
 		}
 
 		// Check if image is too small
 		if ($img->width < 32 || $img->height < 32) {
-			$this->displayError('Image too small');
+			$this->displayMessage($this->msg('avatar-toosmall'));
 			return;
 		}
 
 		// Check if image is too big
 		if ($img->width > $wgMaxAvatarResolution || $img->height > $wgMaxAvatarResolution) {
-			$this->displayError('Image too big');
+			$this->displayMessage($this->msg('avatar-toolarge'));
 			return;
 		}
 
@@ -138,7 +140,7 @@ class SpecialUpload extends \SpecialPage {
 			$img->createThumbnail($res, $uploadDir . $res . '.png');
 		}
 
-		$this->displayError('Avatar saved');
+		$this->displayMessage($this->msg('avatar-saved'));
 		return;
 	}
 
