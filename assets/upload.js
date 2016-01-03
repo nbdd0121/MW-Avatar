@@ -188,7 +188,7 @@ function onImageLoaded() {
     return;
   }
 
-  errorMsg.text(mw.msg(''));
+  errorMsg.text('');
 
   container.removeAttr('disabled');
   submitButton.removeAttr('disabled');
