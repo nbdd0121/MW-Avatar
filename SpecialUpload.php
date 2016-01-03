@@ -89,7 +89,7 @@ class SpecialUpload extends \SpecialPage {
 	private function processUpload() {
 		$request = $this->getRequest();
 		$dataurl = $request->getVal('avatar');
-		if (!$dataurl) {
+		if (!$dataurl || parse_url($dataurl, PHP_URL_SCHEME) !== 'data') {
 			$this->displayMessage($this->msg('avatar-notuploaded'));
 			return;
 		}
