@@ -46,7 +46,8 @@
 		"AvatarThumbRes": [32, 64, 128, 256], 
 		"MaxAvatarResolution": 256,
 		"DefaultAvatarRes": 128,
-		"PrefAvatarRes": 32
+		"PrefAvatarRes": 32,
+		"UseAvatar": true
 	},
 	"manifest_version": 1
 }
