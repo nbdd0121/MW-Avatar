@@ -11,7 +11,7 @@ class Avatar {
 			'type' => 'info',
 			'raw' => true,
 			'label-message' => 'prefs-editavatar',
-			'default' => '<img src="' . \SpecialPage::getTitleFor("Avatar/{$user->getName()}/$wgPrefAvatarRes")->getLinkURL() . '"></img> ' . $link,
+			'default' => '<img src="' . \SpecialPage::getTitleFor("Avatar/{$user->getName()}/$wgPrefAvatarRes")->getLinkURL() . '" width="32"></img> ' . $link,
 			'section' => 'personal/info',
 		);
 

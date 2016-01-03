@@ -8,5 +8,6 @@
 	"avatar-invalid": "Image format is not valid",
 	"avatar-notsquare": "Uploaded image is not square",
 	"avatar-toosmall": "Uploaded image is too small",
-	"avatar-toolarge": "Uploaded image is too large"
+	"avatar-toolarge": "Uploaded image is too large",
+	"avatar-saved": "Your avatar is saved"
 }

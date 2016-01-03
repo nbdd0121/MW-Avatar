@@ -8,5 +8,6 @@
 	"avatar-invalid": "图像格式不合法",
 	"avatar-notsquare": "上传的图像不是方的",
 	"avatar-toosmall": "上传的图像太小了",
-	"avatar-toolarge": "上传的图像太大了"
+	"avatar-toolarge": "上传的图像太大了",
+	"avatar-saved": "你的头像已保存"
 }
