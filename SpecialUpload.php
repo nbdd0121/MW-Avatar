@@ -1,60 +1,6 @@
 <?php
 namespace Avatar;
 
-class AvatarProcessor {
-
-	private $dataurl;
-	private $image;
-	public $width;
-	public $height;
-	public $type;
-
-	public function __construct($dataurl) {
-		$this->dataurl = $dataurl;
-
-		$imageInfo = getimagesize($dataurl);
-		list($this->width, $this->height, $this->type) = $imageInfo;
-	}
-
-	public function cleanup() {
-		imagedestory($this->image);
-		$this->image = null;
-	}
-
-	private function loadImage() {
-		switch ($this->type) {
-		case IMAGETYPE_GIF:
-			$this->image = imagecreatefromgif($this->dataurl);
-			break;
-		case IMAGETYPE_PNG:
-			$this->image = imagecreatefrompng($this->dataurl);
-			break;
-		case IMAGETYPE_JPEG:
-			$this->image = imagecreatefromjpeg($this->dataurl);
-			break;
-		}
-	}
-
-	public function createThumbnail($dimension, $file) {
-		if (!$this->image) {
-			$this->loadImage();
-		}
-		if ($dimension > $this->width) {
-			$dimension = $this->width;
-		}
-
-		$thumb = imagecreatetruecolor($dimension, $dimension);
-		imagecopyresampled($thumb, $this->image, 0, 0, 0, 0, $dimension, $dimension, $this->width, $this->height);
-
-		if (!imagepng($thumb, $file)) {
-			throw new \Exception('Failed to save image ' . $file);
-		}
-
-		imagedestroy($thumb);
-	}
-
-}
-
 class SpecialUpload extends \SpecialPage {
 
 	public function __construct() {
@@ -96,7 +42,7 @@ class SpecialUpload extends \SpecialPage {
 			return false;
 		}
 
-		$img = new AvatarProcessor($dataurl);
+		$img = Thumbnail::open($dataurl);
 
 		global $wgMaxAvatarResolution;
 
@@ -136,11 +82,11 @@ class SpecialUpload extends \SpecialPage {
 		// We do this to convert format to png
 		$img->createThumbnail($wgMaxAvatarResolution, $uploadDir . 'original.png');
 
-		// Create thumbnails
-		global $wgAvatarThumbRes;
-		foreach ($wgAvatarThumbRes as $res) {
-			$img->createThumbnail($res, $uploadDir . $res . '.png');
-		}
+		// We only create thumbnail with default resolution here. Others are generated on demand
+		global $wgDefaultAvatarRes;
+		$img->createThumbnail($wgDefaultAvatarRes, $uploadDir . $wgDefaultAvatarRes . '.png');
+
+		$img->cleanup();
 
 		$this->displayMessage($this->msg('avatar-saved'));
 		return true;
