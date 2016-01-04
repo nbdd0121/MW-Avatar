@@ -19,10 +19,11 @@ var startY;
 var submitButton = $('[type=submit]');
 var container = $('<div class="cropper-container" disabled=""/>');
 var imageObj = $('<img src=""></img>');
-var selector = $('<div class="cropper"><div class="tl-resizer"/><div class="tr-resizer"/><div class="bl-resizer"/><div class="br-resizer"/></div>');
+var selector = $('<div class="cropper"><div class="tl-resizer"/><div class="tr-resizer"/><div class="bl-resizer"/><div class="br-resizer"/><div class="round-preview"/></div>');
 var hiddenField = $('[name=avatar]');
 var pickfile = $('#pickfile');
 var errorMsg = $('#errorMsg');
+var roundPreview = selector.find('.round-preview');
 
 // Helper function to limit the selection clip
 function normalizeBound(inner, outer) {
@@ -93,8 +94,20 @@ function updateHidden() {
   var image = cropImage(imageObj[0],
     (bound.left - outer.left) * multiplier,
     (bound.top - outer.top) * multiplier,
-    dim, res)
+    dim, res);
   hiddenField.val(image.toDataURL());
+
+  // We have an image here, so we can easily calcaulte the reverse color
+  var data = image.getContext('2d').getImageData(0, 0, res, res).data;
+  var r = 0, g = 0, b = 0, c = 0;
+  for (var i = 0; i < data.length; i += 4) {
+    c++;
+    r += data[i];
+    g += data[i + 1];
+    b += data[i + 2];
+  }
+
+  roundPreview.css('border-color', 'rgb(' + (256 - Math.round(r / c)) + ', ' + (256 - Math.round(g / c)) + ',' + (256 - Math.round(b / c)) + ')');
 }
 
 function onDragStart(event) {

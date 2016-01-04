@@ -15,3 +15,6 @@ Yet another avatar architecture for MediaWiki
 
 ## How to use
 * Set avatar in user preference, and then Special:Avatar/Username will be redirected to your avatar!
+
+## Extra resources
+* If you are using Gadgets, and you want to display the avatar on the top-right navigation bar, you may find Gadget-ShowAvatar in example folder useful.
