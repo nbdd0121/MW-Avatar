@@ -2,6 +2,7 @@
 Yet another avatar architecture for MediaWiki
 
 ## Install
+* Install php-gd, which is a dependency of this extension
 * Clone the respository, rename it to Avatar and copy to extensions folder
 * Add wfLoadExtension('Avatar'); to your LocalSettings.php
 * You are done!
