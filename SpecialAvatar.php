@@ -62,8 +62,8 @@ class SpecialAvatar extends \SpecialPage {
 		// We use send custom header, in order to control cache
 		$response->statusHeader('302');
 		$response->header('Content-Type: text/html; charset=utf-8');
-		// $response->header('Cache-Control: public, max-age=86400');
-		$response->header('Cache-Control: no-cache');
+		$response->header('Cache-Control: public, max-age=86400');
+		// $response->header('Cache-Control: no-cache');
 		$response->header('Location: ' . $path);
 	}
 
