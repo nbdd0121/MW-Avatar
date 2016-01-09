@@ -9,5 +9,6 @@
 	"avatar-notsquare": "上传的图像不是方的",
 	"avatar-toosmall": "上传的图像太小了",
 	"avatar-toolarge": "上传的图像太大了",
-	"avatar-saved": "你的头像已保存"
+	"avatar-saved": "你的头像已保存",
+	"avatarupload-notice": "'''注意：'''在保存之后，您可能需要清除浏览器缓存才能看到所作出的变更的影响。\n* '''Firefox/Safari：'''按住“Shift”的同时单击“刷新”，或按“Ctrl-F5”或“Ctrl-R”（Mac为“⌘-R”）\n* '''Google Chrome：'''按“Ctrl-Shift-R”（Mac为“⌘-Shift-R”）\n* '''Internet Explorer：'''按住“Ctrl”的同时单击“刷新”，或按“Ctrl-F5”\n* '''Opera：'''在“工具→首选项”中清除缓存\n"
 }

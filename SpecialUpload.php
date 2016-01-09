@@ -107,7 +107,7 @@ class SpecialUpload extends \SpecialPage {
 		// Wrap with a form
 		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'post'), $html);
 
-		$this->getOutput()->addWikiMsg('clearyourcache');
+		$this->getOutput()->addWikiMsg('avatarupload-notice');
 		$this->getOutput()->addHTML($html);
 	}
 
