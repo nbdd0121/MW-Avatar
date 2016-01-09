@@ -93,7 +93,8 @@ class SpecialUpload extends \SpecialPage {
 	}
 
 	public function displayForm() {
-		$html .= '<p></p>';
+		global $wgScript;
+		$html = '<p></p>';
 		$html .= \Html::hidden('avatar', '');
 		$html .= \Html::hidden('title', $this->getTitle());
 
