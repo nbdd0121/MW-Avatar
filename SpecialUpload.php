@@ -4,7 +4,7 @@ namespace Avatar;
 class SpecialUpload extends \SpecialPage {
 
 	public function __construct() {
-		parent::__construct('AvatarUpload');
+		parent::__construct('UploadAvatar');
 	}
 
 	public function execute($par) {
@@ -109,17 +109,17 @@ class SpecialUpload extends \SpecialPage {
 		$html .= \Html::hidden('avatar', '');
 		$html .= \Html::hidden('title', $this->getTitle());
 
-		$html .= \Xml::element('button', array('id' => 'pickfile'), $this->msg('avatarupload-selectfile'));
+		$html .= \Xml::element('button', array('id' => 'pickfile'), $this->msg('uploadavatar-selectfile'));
 
 		$html .= ' ';
 
 		// Submit button
-		$html .= \Xml::submitButton($this->msg('avatarupload-submit')->text());
+		$html .= \Xml::submitButton($this->msg('uploadavatar-submit')->text());
 
 		// Wrap with a form
 		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'post'), $html);
 
-		$this->getOutput()->addWikiMsg('avatarupload-notice');
+		$this->getOutput()->addWikiMsg('uploadavatar-notice');
 		$this->getOutput()->addHTML($html);
 	}
 

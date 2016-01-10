@@ -4,7 +4,7 @@
 	position: relative;
 	height: 400px;
 	width: 400px;
-	border: solid 1px white;
+	border: solid 1px black;
 }
 
 .cropper-container[disabled] {

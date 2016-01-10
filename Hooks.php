@@ -4,7 +4,7 @@ namespace Avatar;
 class Hooks {
 
 	public static function onGetPreferences($user, &$preferences) {
-		$link = \Linker::link(\SpecialPage::getTitleFor("AvatarUpload"), wfMsg('avatarupload'));
+		$link = \Linker::link(\SpecialPage::getTitleFor("UploadAvatar"), wfMsg('uploadavatar'));
 
 		$preferences['editavatar'] = array(
 			'type' => 'info',
