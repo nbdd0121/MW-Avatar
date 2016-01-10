@@ -23,6 +23,7 @@ class SpecialView extends \SpecialPage {
 		$opt = new \FormOptions;
 		$opt->add('user', '');
 		$opt->add('delete', '');
+		$opt->add('reason', '');
 		$opt->fetchValuesFromRequest($this->getRequest());
 
 		// Parse user
@@ -42,6 +43,7 @@ class SpecialView extends \SpecialPage {
 					$logEntry = new \ManualLogEntry('avatar', 'delete');
 					$logEntry->setPerformer($this->getUser());
 					$logEntry->setTarget($userObj->getUserPage());
+					$logEntry->setComment($opt->getValue('reason'));
 					$logId = $logEntry->insert();
 					$logEntry->publish($logId, 'rcandudp');
 				}
@@ -59,17 +61,12 @@ class SpecialView extends \SpecialPage {
 					'src' => parent::getTitleFor('Avatar/' . $user . '/original')->getLinkURL(),
 					'height' => 400,
 				), '');
+				$html = \Xml::tags('p', array(), $html);
 				$this->getOutput()->addHTML($html);
 
 				// Add a delete button
 				if ($canDoAdmin) {
-					global $wgScript;
-					$html = \Html::hidden('title', $this->getTitle());
-					$html .= \Html::hidden('user', $user);
-					$html .= \Html::hidden('delete', 'true');
-					$html .= \Xml::submitButton($this->msg('viewavatar-delete')->text());
-					$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
-					$this->getOutput()->addHTML($html);
+					$this->showDeleteForm($user);
 				}
 			} else {
 				$this->getOutput()->addWikiMsg('viewavatar-noavatar');
@@ -83,7 +80,6 @@ class SpecialView extends \SpecialPage {
 		global $wgScript;
 
 		// This is essential as we need to submit the form to this page
-		$title = parent::getTitleFor('ViewAvatar');
 		$html = \Html::hidden('title', $this->getTitle());
 
 		$html .= \Xml::inputLabel(
@@ -102,6 +98,35 @@ class SpecialView extends \SpecialPage {
 
 		// Fieldset
 		$html = \Xml::fieldset($this->msg('viewavatar-legend')->text(), $html);
+
+		// Wrap with a form
+		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
+
+		$this->getOutput()->addHTML($html);
+	}
+
+	private function showDeleteForm($user) {
+		global $wgScript;
+
+		// This is essential as we need to submit the form to this page
+		$html = \Html::hidden('title', $this->getTitle());
+		$html .= \Html::hidden('delete', 'true');
+		$html .= \Html::hidden('user', $user);
+
+		$html .= \Xml::inputLabel(
+			$this->msg('viewavatar-delete-reason')->text(),
+			'reason',
+			'',
+			45
+		);
+
+		$html .= ' ';
+
+		// Submit button
+		$html .= \Xml::submitButton($this->msg('viewavatar-delete-submit')->text());
+
+		// Fieldset
+		$html = \Xml::fieldset($this->msg('viewavatar-delete-legend')->text(), $html);
 
 		// Wrap with a form
 		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
