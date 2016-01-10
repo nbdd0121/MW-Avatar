@@ -40,6 +40,9 @@ class Thumbnail {
 		}
 
 		$thumb = imagecreatetruecolor($dimension, $dimension);
+		imagesavealpha($thumb, true);
+		$transparent = imagecolorallocatealpha($thumb, 0, 0, 0, 127);
+		imagefill($thumb, 0, 0, $transparent);
 		imagecopyresampled($thumb, $this->image, 0, 0, 0, 0, $dimension, $dimension, $this->width, $this->height);
 
 		if (!imagepng($thumb, $file)) {

@@ -16,9 +16,13 @@ class SpecialUpload extends \SpecialPage {
 		global $wgMaxAvatarResolution;
 		$this->getOutput()->addJsConfigVars('wgMaxAvatarResolution', $wgMaxAvatarResolution);
 
-		$this->getOutput()->addModules('ext.avatar.upload');
-
 		$request = $this->getRequest();
+
+		if ($this->getUser()->isBlocked()) {
+			throw new \UserBlockedError($this->getUser()->getBlock());
+		}
+
+		$this->getOutput()->addModules('ext.avatar.upload');
 
 		if ($request->wasPosted()) {
 			if ($this->processUpload()) {
