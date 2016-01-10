@@ -10,5 +10,11 @@
 	"avatar-toosmall": "Uploaded image is too small",
 	"avatar-toolarge": "Uploaded image is too large",
 	"avatar-saved": "Your avatar is saved",
-	"avatarupload-notice": "'''Note:''' After saving, you may have to bypass your browser's cache to see the changes.\n* '''Firefox / Safari''': Hold ''Shift'' while clicking ''Reload'', or press either ''Ctrl-F5'' or ''Ctrl-R'' (''⌘-R'' on a Mac)\n* '''Google Chrome:''' Press ''Ctrl-Shift-R'' (''⌘-Shift-R'' on a Mac)\n* '''Internet Explorer:''' Hold ''Ctrl'' while clicking ''Refresh'', or press ''Ctrl-F5''\n* '''Opera:''' Clear the cache in ''Tools'' → ''Preferences''"
+	"avatarupload-notice": "'''Note:''' After saving, you may have to bypass your browser's cache to see the changes.\n* '''Firefox / Safari''': Hold ''Shift'' while clicking ''Reload'', or press either ''Ctrl-F5'' or ''Ctrl-R'' (''⌘-R'' on a Mac)\n* '''Google Chrome:''' Press ''Ctrl-Shift-R'' (''⌘-Shift-R'' on a Mac)\n* '''Internet Explorer:''' Hold ''Ctrl'' while clicking ''Refresh'', or press ''Ctrl-F5''\n* '''Opera:''' Clear the cache in ''Tools'' → ''Preferences''",
+
+	"log-name-avatar": "Avatar log",
+	"log-description-avatar": "This page shows uploads and administrative activities about avatars.",
+	"logentry-avatar-upload": "$1 uploaded an avatar",
+	"logentry-avatar-delete": "$1 deleted $3's avatar"
+
 }

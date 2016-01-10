@@ -89,6 +89,13 @@ class SpecialUpload extends \SpecialPage {
 		$img->cleanup();
 
 		$this->displayMessage($this->msg('avatar-saved'));
+
+		$logEntry = new \ManualLogEntry('avatar', 'upload');
+		$logEntry->setPerformer($this->getUser());
+		$logEntry->setTarget($this->getUser()->getUserPage());
+		$logId = $logEntry->insert();
+		$logEntry->publish($logId, 'rcandudp');
+
 		return true;
 	}
 
