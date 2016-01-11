@@ -12,16 +12,14 @@ class SpecialUpload extends \SpecialPage {
 
 		$this->setHeaders();
 		$this->outputHeader();
-
-		global $wgMaxAvatarResolution;
-		$this->getOutput()->addJsConfigVars('wgMaxAvatarResolution', $wgMaxAvatarResolution);
-
 		$request = $this->getRequest();
 
 		if ($this->getUser()->isBlocked()) {
 			throw new \UserBlockedError($this->getUser()->getBlock());
 		}
 
+		global $wgMaxAvatarResolution;
+		$this->getOutput()->addJsConfigVars('wgMaxAvatarResolution', $wgMaxAvatarResolution);
 		$this->getOutput()->addModules('ext.avatar.upload');
 
 		if ($request->wasPosted()) {
@@ -81,7 +79,7 @@ class SpecialUpload extends \SpecialPage {
 		// Avatar directories
 		global $wgUploadDirectory;
 		$uploadDir = $wgUploadDirectory . '/avatars/' . $this->getUser()->getId() . '/';
-		mkdir($uploadDir, 0777, true);
+		@mkdir($uploadDir, 0777, true);
 
 		// We do this to convert format to png
 		$img->createThumbnail($wgMaxAvatarResolution, $uploadDir . 'original.png');
