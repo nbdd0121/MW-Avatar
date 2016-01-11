@@ -106,10 +106,8 @@ class SpecialUpload extends \SpecialPage {
 	}
 
 	public function displayForm() {
-		global $wgScript;
 		$html = '<p></p>';
 		$html .= \Html::hidden('avatar', '');
-		$html .= \Html::hidden('title', $this->getTitle());
 
 		$html .= \Xml::element('button', array('id' => 'pickfile'), $this->msg('uploadavatar-selectfile'));
 
@@ -119,7 +117,7 @@ class SpecialUpload extends \SpecialPage {
 		$html .= \Xml::submitButton($this->msg('uploadavatar-submit')->text());
 
 		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'post'), $html);
+		$html = \Xml::tags('form', array('action' => $this->getTitle()->getLinkURL(), 'method' => 'post'), $html);
 
 		$this->getOutput()->addWikiMsg('uploadavatar-notice');
 		$this->getOutput()->addHTML($html);
