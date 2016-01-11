@@ -18,6 +18,10 @@ class SpecialUpload extends \SpecialPage {
 			throw new \UserBlockedError($this->getUser()->getBlock());
 		}
 
+		if (!$this->getUser()->isAllowed('avatarupload')) {
+			throw new \PermissionsError('avatarupload');
+		}
+
 		global $wgMaxAvatarResolution;
 		$this->getOutput()->addJsConfigVars('wgMaxAvatarResolution', $wgMaxAvatarResolution);
 		$this->getOutput()->addModules('ext.avatar.upload');

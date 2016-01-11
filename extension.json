@@ -49,9 +49,13 @@
 		"Avatar": "Avatar\\SpecialAvatar"
 	},
 	"AvailableRights": [
+		"avatarupload",
 		"avataradmin"
 	],
 	"GroupPermissions": {
+		"user": {
+			"avatarupload": true
+		},
 		"sysop": {
 			"avataradmin": true
 		}

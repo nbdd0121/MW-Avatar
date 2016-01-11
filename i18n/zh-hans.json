@@ -14,6 +14,8 @@
 
 	"right-avataradmin": "删除头像",
 	"action-avataradmin": "删除头像",
+	"right-avatarupload": "上传您的头像",
+	"action-avatarupload": "上传头像",
 
 	"log-name-avatar": "头像日志",
 	"log-description-avatar": "这个页面显示了头像的上传和管理活动。",

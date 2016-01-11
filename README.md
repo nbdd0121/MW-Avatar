@@ -13,6 +13,7 @@ Yet another avatar architecture for MediaWiki
 * $wgMaxAvatarResolution (integer), default value is 256. This limits maximum resolution of image to be uploaded.
 * $wgDefaultAvatarRes (integer), default value is 128. This is the fallback option if resolution is not specified.
 * You can set user rights: 
+	* avatarupload: User need this right to upload ones' own avatar.
 	* avataradmin: User need this right to delete others' avatars.
 
 ## How to use
