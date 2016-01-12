@@ -17,7 +17,7 @@ Yet another avatar architecture for MediaWiki
 	* avataradmin: User need this right to delete others' avatars.
 
 ## How to use
-* Set avatar in user preference, and then $wgScriptPath/extensions/Avatar/avatar.php?Username will be redirected to your avatar.
+* Set avatar in user preference, and then $wgScriptPath/extensions/Avatar/avatar.php?username will be redirected to your avatar.
 * You can set alias for this php to make it shorter.
 
 ## Extra resources

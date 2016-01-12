@@ -26,7 +26,9 @@ if ($par) {
 	$username = $parts[0];
 	$res = count($parts) === 2 ? \Avatar\Avatars::normalizeResolution($parts[1]) : $wgDefaultAvatarRes;
 	$user = User::newFromName($username);
-	$path = \Avatar\Avatars::getAvatar($user, $res);
+	if ($user) {
+		$path = \Avatar\Avatars::getAvatar($user, $res);
+	}
 }
 
 $response = $wgRequest->response();

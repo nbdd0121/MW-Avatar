@@ -10,7 +10,7 @@ class Hooks {
 			'type' => 'info',
 			'raw' => true,
 			'label-message' => 'prefs-editavatar',
-			'default' => '<img src="' . \SpecialPage::getTitleFor("Avatar/{$user->getName()}")->getLinkURL() . '" width="32"></img> ' . $link,
+			'default' => '<img src="' . Avatars::getLinkFor($user->getName()) . '" width="32"></img> ' . $link,
 			'section' => 'personal/info',
 		);
 
