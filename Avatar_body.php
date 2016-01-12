@@ -3,6 +3,11 @@ namespace Avatar;
 
 class Avatars {
 
+	public static function getLinkFor($username) {
+		global $wgScriptPath;
+		return "$wgScriptPath/extensions/Avatar/avatar.php?$username";
+	}
+
 	public static function normalizeResolution($res) {
 		if ($res === 'original') {
 			return 'original';
@@ -19,7 +24,7 @@ class Avatars {
 		return 'original';
 	}
 
-	public static function getAvatar($user, $res) {
+	public static function getAvatar(\User $user, $res) {
 		global $wgDefaultAvatar, $wgDefaultAvatarRes;
 		$path = $wgDefaultAvatar;
 
@@ -46,12 +51,12 @@ class Avatars {
 		return $path;
 	}
 
-	public static function hasAvatar($user) {
+	public static function hasAvatar(\User $user) {
 		global $wgDefaultAvatar;
 		return self::getAvatar($user, 'original') !== $wgDefaultAvatar;
 	}
 
-	public static function deleteAvatar($user) {
+	public static function deleteAvatar(\User $user) {
 		global $wgUploadDirectory;
 		$dirPath = $wgUploadDirectory . "/avatars/{$user->getId()}/";
 		if (!is_dir($dirPath)) {

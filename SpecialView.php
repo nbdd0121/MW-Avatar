@@ -58,7 +58,7 @@ class SpecialView extends \SpecialPage {
 
 			if ($haveAvatar) {
 				$html = \Xml::tags('img', array(
-					'src' => parent::getTitleFor('Avatar/' . $user . '/original')->getLinkURL(),
+					'src' => Avatars::getLinkFor($user) . '/original',
 					'height' => 400,
 				), '');
 				$html = \Xml::tags('p', array(), $html);

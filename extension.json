@@ -36,7 +36,6 @@
 		"Avatar\\Avatars": "Avatar_body.php",
 		"Avatar\\Thumbnail": "Thumbnail.php",
 		"Avatar\\SpecialUpload": "SpecialUpload.php",
-		"Avatar\\SpecialAvatar": "SpecialAvatar.php",
 		"Avatar\\SpecialView": "SpecialView.php"
 	},
 	"ResourceFileModulePaths": {
@@ -45,8 +44,7 @@
 	},
 	"SpecialPages": {
 		"UploadAvatar": "Avatar\\SpecialUpload",
-		"ViewAvatar": "Avatar\\SpecialView",
-		"Avatar": "Avatar\\SpecialAvatar"
+		"ViewAvatar": "Avatar\\SpecialView"
 	},
 	"AvailableRights": [
 		"avatarupload",
