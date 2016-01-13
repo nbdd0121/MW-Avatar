@@ -80,6 +80,9 @@ class SpecialUpload extends \SpecialPage {
 			return false;
 		}
 
+		$user = $this->getUser();
+		Avatars::deleteAvatar($user);
+
 		// Avatar directories
 		global $wgUploadDirectory;
 		$uploadDir = $wgUploadDirectory . '/avatars/' . $this->getUser()->getId() . '/';
