@@ -21,6 +21,7 @@
 	"log-description-avatar": "This page shows uploads and administrative activities about avatars.",
 	"logentry-avatar-upload": "$1 uploaded an avatar",
 	"logentry-avatar-delete": "$1 deleted $3's avatar",
+	"logentry-avatar-action-view": "View",
 
 	"viewavatar": "View Avatars",
 	"viewavatar-legend": "View Avatars",
@@ -30,7 +31,8 @@
 	"viewavatar-delete-reason": "Reason: ",
 	"viewavatar-delete-submit": "Delete",
 	"viewavatar-noavatar": "* This user does not have an avatar.",
-	"viewavatar-nouser": "* No such user."
+	"viewavatar-nouser": "* No such user.",
 
-
+	"sidebar-section-extension": "Extension",
+	"sidebar-viewavatar": "View Avatar"
 }

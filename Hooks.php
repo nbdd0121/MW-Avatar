@@ -3,7 +3,7 @@ namespace Avatar;
 
 class Hooks {
 
-	public static function onGetPreferences($user, &$preferences) {
+	public static function onGetPreferences(\User $user, &$preferences) {
 		$link = \Linker::link(\SpecialPage::getTitleFor("UploadAvatar"), wfMsg('uploadavatar'));
 
 		$preferences['editavatar'] = array(
@@ -14,6 +14,22 @@ class Hooks {
 			'section' => 'personal/info',
 		);
 
+		return true;
+	}
+
+	public static function onSkinBuildSidebar(\Skin $skin, &$bar) {
+		$relevUser = $skin->getRelevantUser();
+		if ($relevUser) {
+			$bar['sidebar-section-extension'][] =
+			array(
+				'text' => wfMsg('sidebar-viewavatar'),
+				'href' => \SpecialPage::getTitleFor('ViewAvatar')->getLocalURL(array(
+					'user' => $relevUser->getName(),
+				)),
+				'id' => 'n-viewavatar',
+				'active' => '',
+			);
+		}
 		return true;
 	}
 }

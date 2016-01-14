@@ -21,6 +21,7 @@
 	"log-description-avatar": "这个页面显示了头像的上传和管理活动。",
 	"logentry-avatar-upload": "$1上传了一个头像",
 	"logentry-avatar-delete": "$1删除了$3的头像",
+	"logentry-avatar-action-view": "查看",
 
 	"viewavatar": "查看头像",
 	"viewavatar-legend": "查看头像",
@@ -30,5 +31,8 @@
 	"viewavatar-delete-reason": "理由：",
 	"viewavatar-delete-submit": "删除",
 	"viewavatar-noavatar": "* 该用户没有头像。",
-	"viewavatar-nouser": "* 该用户不存在。"
+	"viewavatar-nouser": "* 该用户不存在。",
+
+	"sidebar-section-extension": "扩展程序",
+	"sidebar-viewavatar": "查看头像"
 }

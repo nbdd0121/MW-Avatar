@@ -15,7 +15,8 @@
 		]
 	},
 	"Hooks": {
-		"GetPreferences": "Avatar\\Hooks::onGetPreferences"
+		"GetPreferences": "Avatar\\Hooks::onGetPreferences",
+		"SkinBuildSidebar": "Avatar\\Hooks::onSkinBuildSidebar"
 	},
 	"ResourceModules": {
 		"ext.avatar.upload": {
@@ -36,7 +37,8 @@
 		"Avatar\\Avatars": "Avatar_body.php",
 		"Avatar\\Thumbnail": "Thumbnail.php",
 		"Avatar\\SpecialUpload": "SpecialUpload.php",
-		"Avatar\\SpecialView": "SpecialView.php"
+		"Avatar\\SpecialView": "SpecialView.php",
+		"Avatar\\UploadLogFormatter": "includes/UploadLogFormatter.php"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "",
@@ -62,7 +64,7 @@
 		"avatar"
 	],
 	"LogActionsHandlers": {
-		"avatar/upload": "LogFormatter",
+		"avatar/upload": "Avatar\\UploadLogFormatter",
 		"avatar/delete": "LogFormatter"
 	},
 	"config": {
