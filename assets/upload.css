@@ -12,6 +12,10 @@
 	position: absolute;
 }
 
+.current-avatar {
+	max-height: 256px;
+}
+
 .cropper {
 	position: absolute;
 	outline: solid rgba(0, 0, 0, 0.6) 1000px;

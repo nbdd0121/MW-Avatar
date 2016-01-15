@@ -28,7 +28,9 @@
 			],
 			"messages": [
 				"avatar-invalid",
-				"avatar-toosmall"
+				"avatar-toosmall",
+				"uploadavatar-nofile",
+				"uploadavatar-hint"
 			]
 		}
 	},

@@ -17,9 +17,11 @@ var startY;
 
 // Objects
 var submitButton = $('[type=submit]');
+var currentAvatar = $('<div>').append($('<img class="current-avatar">').attr('src', mw.config.get('wgScriptPath') + '/extensions/Avatar/avatar.php?' + mw.user.id() + '/original'));
 var container = $('<div class="cropper-container" disabled=""/>');
 var imageObj = $('<img src=""></img>');
 var selector = $('<div class="cropper"><div class="tl-resizer"/><div class="tr-resizer"/><div class="bl-resizer"/><div class="br-resizer"/><div class="round-preview"/></div>');
+var msgBelow = $('<p>').text(mw.msg('uploadavatar-nofile'));
 var hiddenField = $('[name=avatar]');
 var pickfile = $('#pickfile');
 var errorMsg = $('#errorMsg');
@@ -202,6 +204,8 @@ function onImageLoaded() {
     errorMsg.text(mw.msg('avatar-toosmall'));
     imageObj.attr('src', '');
     container.attr('disabled', '');
+    currentAvatar.show();
+    msgBelow.text(mw.msg('uploadavatar-nofile'));
     submitButton.attr('disabled', '');
     return;
   }
@@ -210,6 +214,8 @@ function onImageLoaded() {
 
   container.removeAttr('disabled');
   submitButton.removeAttr('disabled');
+  currentAvatar.hide();
+  msgBelow.text(mw.msg('uploadavatar-hint'));
   visualHeight = height;
   visualWidth = width;
 
@@ -241,6 +247,8 @@ function onImageLoadingFailed() {
   imageObj.attr('src', '');
   container.attr('disabled', '');
   submitButton.attr('disabled', '');
+  currentAvatar.show();
+  msgBelow.text(mw.msg('uploadavatar-nofile'));
   return;
 }
 
@@ -292,4 +300,6 @@ imageObj
 submitButton.attr('disabled', '');
 container.append(imageObj);
 container.append(selector);
+hiddenField.before(currentAvatar);
 hiddenField.before(container);
+hiddenField.before(msgBelow);
