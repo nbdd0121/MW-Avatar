@@ -20,6 +20,9 @@
 	},
 	"ResourceModules": {
 		"ext.avatar.upload": {
+			"dependencies": [
+				"mediawiki.user"
+			],
 			"scripts":[
 				"assets/upload.js"
 			],
@@ -70,7 +73,7 @@
 		"avatar/delete": "LogFormatter"
 	},
 	"config": {
-		"DefaultAvatar": "http://static.mengniang.org/common/f/f2/645f3c7fgw1eszwigytqmj20m80m8whl.jpg",
+		"DefaultAvatar": "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm&f=y",
 		"MaxAvatarResolution": 256,
 		"AllowedAvatarRes": [64, 128], 
 		"DefaultAvatarRes": 128,
