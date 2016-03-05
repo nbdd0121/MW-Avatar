@@ -3,9 +3,14 @@ namespace Avatar;
 
 class Avatars {
 
-	public static function getLinkFor($username) {
+	public static function getLinkFor($username, $res = false) {
 		global $wgScriptPath;
-		return "$wgScriptPath/extensions/Avatar/avatar.php?$username";
+		$path = "$wgScriptPath/extensions/Avatar/avatar.php?user=$username";
+		if ($res !== false) {
+			return $path . '&res=' . $res;
+		} else {
+			return $path;
+		}
 	}
 
 	public static function normalizeResolution($res) {

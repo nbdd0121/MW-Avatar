@@ -17,7 +17,7 @@ var startY;
 
 // Objects
 var submitButton = $('[type=submit]');
-var currentAvatar = $('<div>').append($('<img class="current-avatar">').attr('src', mw.config.get('wgScriptPath') + '/extensions/Avatar/avatar.php?' + mw.user.id() + '/original'));
+var currentAvatar = $('<div>').append($('<img class="current-avatar">').attr('src', mw.config.get('wgScriptPath') + '/extensions/Avatar/avatar.php?user=' + mw.user.id() + '&res=original&nocache&ver=' + Math.floor(Date.now()/1000).toString(16)));
 var container = $('<div class="cropper-container" disabled=""/>');
 var imageObj = $('<img src=""></img>');
 var selector = $('<div class="cropper"><div class="tl-resizer"/><div class="tr-resizer"/><div class="bl-resizer"/><div class="br-resizer"/><div class="round-preview"/></div>');
