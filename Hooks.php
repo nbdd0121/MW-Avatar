@@ -17,19 +17,31 @@ class Hooks {
 		return true;
 	}
 
-	public static function onSkinBuildSidebar(\Skin $skin, &$bar) {
-		$relevUser = $skin->getRelevantUser();
-		if ($relevUser) {
-			$bar['sidebar-section-extension'][] =
-			array(
+	public static function onBaseTemplateToolbox(\BaseTemplate &$baseTemplate, array &$toolbox) {
+		if (isset($baseTemplate->data['nav_urls']['viewavatar'])
+			&& $baseTemplate->data['nav_urls']['viewavatar']) {
+			$toolbox['viewavatar'] = $baseTemplate->data['nav_urls']['viewavatar'];
+			$toolbox['viewavatar']['id'] = 't-viewavatar';
+		}
+	}
+
+	public static function onSkinTemplateOutputPageBeforeExec(&$skinTemplate, &$tpl) {
+
+		$user = $skinTemplate->getRelevantUser();
+
+		if ($user) {
+			$nav_urls = $tpl->get('nav_urls');
+
+			$nav_urls['viewavatar'] = [
 				'text' => wfMsg('sidebar-viewavatar'),
 				'href' => \SpecialPage::getTitleFor('ViewAvatar')->getLocalURL(array(
-					'user' => $relevUser->getName(),
+					'user' => $user->getName(),
 				)),
-				'id' => 'n-viewavatar',
-				'active' => '',
-			);
+			];
+
+			$tpl->set('nav_urls', $nav_urls);
 		}
+
 		return true;
 	}
 }

@@ -16,7 +16,8 @@
 	},
 	"Hooks": {
 		"GetPreferences": "Avatar\\Hooks::onGetPreferences",
-		"SkinBuildSidebar": "Avatar\\Hooks::onSkinBuildSidebar"
+		"BaseTemplateToolbox": "Avatar\\Hooks::onBaseTemplateToolbox",
+		"SkinTemplateOutputPageBeforeExec": "Avatar\\Hooks::onSkinTemplateOutputPageBeforeExec"
 	},
 	"ResourceModules": {
 		"ext.avatar.upload": {
