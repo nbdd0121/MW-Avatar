@@ -4,7 +4,7 @@ namespace Avatar;
 class Hooks {
 
 	public static function onGetPreferences(\User $user, &$preferences) {
-		$link = \Linker::link(\SpecialPage::getTitleFor("UploadAvatar"), wfMsg('uploadavatar'));
+		$link = \Linker::link(\SpecialPage::getTitleFor("UploadAvatar"), wfMessage('uploadavatar')->text());
 
 		$preferences['editavatar'] = array(
 			'type' => 'info',
@@ -33,7 +33,7 @@ class Hooks {
 			$nav_urls = $tpl->get('nav_urls');
 
 			$nav_urls['viewavatar'] = [
-				'text' => wfMsg('sidebar-viewavatar'),
+				'text' => wfMessage('sidebar-viewavatar')->text(),
 				'href' => \SpecialPage::getTitleFor('ViewAvatar')->getLocalURL(array(
 					'user' => $user->getName(),
 				)),
