@@ -1,44 +1,46 @@
 {
 	"@metadata": {
 		"authors": [
-			"Recital君"
+			"Recital君",
+			"Nostalgia",
+			"Nbdd0121"
 		]
 	},
-	"avatar_desc": "這個擴充套件提供了可用於其他擴充套件的個人相片系統",
-	"uploadavatar": "上傳個人相片",
-	"uploadavatar-submit": "上傳個人相片",
+	"avatar_desc": "這個擴充套件提供了可用於其他擴充套件的頭像系統",
+	"uploadavatar": "上傳頭像",
+	"uploadavatar-submit": "上傳頭像",
 	"uploadavatar-selectfile": "選擇檔案",
-	"prefs-editavatar": "個人相片：",
+	"prefs-editavatar": "頭像：",
 	"avatar-notuploaded": "沒有上傳任何檔案",
 	"avatar-invalid": "檔案類型不合法",
-	"avatar-notsquare": "上傳的影象不是方的",
-	"avatar-toosmall": "上傳的影象太小了",
-	"avatar-toolarge": "上傳的影象太大了",
-	"avatar-saved": "你的個人相片已儲存",
+	"avatar-notsquare": "上傳的圖像不是方的",
+	"avatar-toosmall": "上傳的圖像太小了",
+	"avatar-toolarge": "上傳的圖像太大了",
+	"avatar-saved": "您的頭像已儲存",
 	"uploadavatar-notice": "'''注意：'''儲存後，您可能需要清除瀏覽器快取才能看到變更。\n* '''Firefox/Safari：'''按住“Shift”的同時單擊“重新整理”，或按“Ctrl-F5”或“Ctrl-R”（Mac為“⌘-R”）\n* '''Google Chrome：'''按“Ctrl-Shift-R”（Mac為“⌘-Shift-R”）\n* '''Internet Explorer：'''按住“Ctrl”的同時單擊“重新整理”，或按“Ctrl-F5”\n* '''Opera：'''在“工具→首選項”中清除快取\n",
-	"uploadavatar-nofile": "這是你當前的個人相片。要變更你的個人相片，請點選下方的“上傳個人相片”按鈕。",
-	"uploadavatar-hint": "你可以調整裁剪器的大小或移動它以裁剪你的個人相片。",
+	"uploadavatar-nofile": "這是你當前的頭像。要變更你的頭像，請點選下方的“上傳頭像”按鈕。",
+	"uploadavatar-hint": "你可以調整裁剪器的大小或移動它以裁剪你的頭像。",
 
-	"right-avataradmin": "刪除個人相片",
-	"action-avataradmin": "刪除個人相片",
-	"right-avatarupload": "上傳您的個人相片",
-	"action-avatarupload": "上傳個人相片",
+	"right-avataradmin": "刪除頭像",
+	"action-avataradmin": "刪除頭像",
+	"right-avatarupload": "上傳您的頭像",
+	"action-avatarupload": "上傳頭像",
 
-	"log-name-avatar": "個人相片日誌",
-	"log-description-avatar": "這個頁面顯示了個人相片的上傳和管理活動。",
-	"logentry-avatar-upload": "$1上傳了個人相片",
-	"logentry-avatar-delete": "$1刪除了$3的個人相片",
+	"log-name-avatar": "頭像日誌",
+	"log-description-avatar": "這個頁面顯示了頭像的上傳和管理活動。",
+	"logentry-avatar-upload": "$1上傳了頭像",
+	"logentry-avatar-delete": "$1刪除了$3的頭像",
 	"logentry-avatar-action-view": "檢視",
 
-	"viewavatar": "檢視個人相片",
-	"viewavatar-legend": "檢視個人相片",
+	"viewavatar": "檢視頭像",
+	"viewavatar-legend": "檢視頭像",
 	"viewavatar-username": "使用者名稱：",
 	"viewavatar-submit": "檢視",
-	"viewavatar-delete-legend": "刪除個人相片",
+	"viewavatar-delete-legend": "刪除頭像",
 	"viewavatar-delete-reason": "理由：",
 	"viewavatar-delete-submit": "刪除",
-	"viewavatar-noavatar": "* 該使用者沒有個人相片。",
+	"viewavatar-noavatar": "* 該使用者沒有頭像。",
 	"viewavatar-nouser": "* 該使用者不存在。",
 
-	"sidebar-viewavatar": "檢視個人相片"
+	"sidebar-viewavatar": "檢視頭像"
 }

@@ -12,6 +12,6 @@ $specialPageAliases['zh-hans'] = array(
 );
 
 $specialPageAliases['zh-hant'] = array(
-	'UploadAvatar' => array('上傳個人相片'),
-	'ViewAvatar' => array('檢視個人相片'),
+	'UploadAvatar' => array('上傳頭像'),
+	'ViewAvatar' => array('檢視頭像'),
 );
