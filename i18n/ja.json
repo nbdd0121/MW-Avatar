@@ -1,0 +1,39 @@
+{
+	"avatar_desc": "この拡張機能は、他の拡張機能のために使用することができるアバターシステムを提供します",
+	"uploadavatar": "アバターをアップロード",
+	"uploadavatar-submit": "アバターをアップロード",
+	"uploadavatar-selectfile": "ファイルを選択",
+	"prefs-editavatar": "アバター：",
+	"avatar-notuploaded": "アップロードしたファイルはアバターが空のようです。",
+	"avatar-invalid": "画像形式が無効です",
+	"avatar-notsquare": "アップロードした画像は正方形ではありません",
+	"avatar-toosmall": "アップロードされた画像が小さすぎます",
+	"avatar-toolarge": "アップロードされた画像が大きすぎます",
+	"avatar-saved": "アバターを保存しました。",
+	"uploadavatar-notice": "'''注意:'''保存後、変更を確認するにはブラウザーのキャッシュを消去する必要がある場合があります。\n* '''Firefox / Safari:''' ''Shift'' を押しながら ''再読み込み'' をクリックするか、''Ctrl-F5'' または ''Ctrl-R'' を押してください (Mac では ''&#x2318;-R'')\n* '''Google Chrome:''' ''Ctrl-Shift-R'' を押してください (Mac では ''⌘-Shift-R'')\n* '''Internet Explorer:''' ''Ctrl'' を押しながら ''最新の情報に更新'' をクリックするか、''Ctrl-F5'' を押してください\n* '''Opera:'''''ツール → 設定'' からキャッシュをクリアしてください。",
+	"uploadavatar-nofile": "これはあなたの現在のアバターです。あなたのアバターを変更するには、下の「ファイルを選択」ボタンをクリックしてください。",
+	"uploadavatar-hint": "アバターをトリミングするには、ボックスのサイズを調整したり、移動しだりしてください。",
+
+	"right-avataradmin": "他の利用者のアバターを削除",
+	"action-avataradmin": "このアバターを削除",
+	"right-avatarupload": "自身のアバターをアップロード",
+	"action-avatarupload": "このアバターをアップロード",
+
+	"log-name-avatar": "アバター記録",
+	"log-description-avatar": "以下はアバターのアップロード及び管理の記録です。",
+	"logentry-avatar-upload": "$1 がアバターをアップロードしました",
+	"logentry-avatar-delete": "$1 が「$3」のアバターを削除しました",
+	"logentry-avatar-action-view": "検査",
+
+	"viewavatar": "アバターを検査",
+	"viewavatar-legend": "アバターを検査",
+	"viewavatar-username": "利用者名：",
+	"viewavatar-submit": "検査",
+	"viewavatar-delete-legend": "アバターを削除",
+	"viewavatar-delete-reason": "理由：",
+	"viewavatar-delete-submit": "削除",
+	"viewavatar-noavatar": "* この利用者はアバターがいません。",
+	"viewavatar-nouser": "* この名前の利用者は存在しません。",
+
+	"sidebar-viewavatar": "アバターを検査"
+}

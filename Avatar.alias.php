@@ -15,3 +15,8 @@ $specialPageAliases['zh-hant'] = array(
 	'UploadAvatar' => array('上傳頭像'),
 	'ViewAvatar' => array('檢視頭像'),
 );
+
+$specialPageAliases['ja'] = array(
+	'UploadAvatar' => array('アバターをアップロード'),
+	'ViewAvatar' => array('アバターを検査'),
+);
