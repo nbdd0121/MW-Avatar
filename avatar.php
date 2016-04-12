@@ -61,7 +61,5 @@ if (!isset($query['nocache'])) {
 
 $response->header('Location: ' . $path);
 
-echo $par;
-
 $mediawiki = new MediaWiki();
 $mediawiki->doPostOutputShutdown('fast');
