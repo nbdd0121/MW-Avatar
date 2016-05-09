@@ -16,8 +16,7 @@ if (!$wgRequest->checkUrlExtension()) {
 
 $query = $wgRequest->getQueryValues();
 
-global $wgDefaultAvatar;
-$path = $wgDefaultAvatar;
+$path = null;
 
 if (isset($query['user'])) {
 	$username = $query['user'];
@@ -42,6 +41,12 @@ if (isset($query['ver'])) {
 	} else {
 		$path .= '?ver=' . $query['ver'];
 	}
+} else if ($path !== null) {
+	global $wgVersionAvatar;
+	if ($wgVersionAvatar) {
+		global $wgUploadDirectory;
+		$path .= '?ver=' . filemtime($wgUploadDirectory . $path);
+	}
 }
 
 $response = $wgRequest->response();
@@ -52,14 +57,20 @@ $response->statusHeader('302');
 if (!isset($query['nocache'])) {
 	// Cache longer time if it is not the default avatar
 	// As it is unlikely to be deleted
-	if ($path === $wgDefaultAvatar) {
+	if ($path === null) {
 		$response->header('Cache-Control: public, max-age=3600');
 	} else {
 		$response->header('Cache-Control: public, max-age=86400');
 	}
 }
 
-$response->header('Location: ' . $path);
+if ($path === null) {
+	global $wgDefaultAvatar;
+	$response->header('Location: ' . $wgDefaultAvatar);
+} else {
+	global $wgUploadPath;
+	$response->header('Location: ' . $wgUploadPath . $path);
+}
 
 $mediawiki = new MediaWiki();
 $mediawiki->doPostOutputShutdown('fast');

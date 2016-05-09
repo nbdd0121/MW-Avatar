@@ -30,17 +30,17 @@ class Avatars {
 	}
 
 	public static function getAvatar(\User $user, $res) {
-		global $wgDefaultAvatar, $wgDefaultAvatarRes;
-		$path = $wgDefaultAvatar;
+		global $wgDefaultAvatarRes;
+		$path = null;
 
 		// If user exists
 		if ($user && $user->getId()) {
-			global $wgUploadDirectory, $wgUploadPath;
+			global $wgUploadDirectory;
 			$avatarPath = "/avatars/{$user->getId()}/$res.png";
 
 			// Check if requested avatar thumbnail exists
 			if (file_exists($wgUploadDirectory . $avatarPath)) {
-				$path = $wgUploadPath . $avatarPath;
+				$path = $avatarPath;
 			} else if ($res !== 'original') {
 				// Dynamically generate upon request
 				$originalAvatarPath = "/avatars/{$user->getId()}/original.png";
@@ -48,7 +48,7 @@ class Avatars {
 					$image = Thumbnail::open($wgUploadDirectory . $originalAvatarPath);
 					$image->createThumbnail($res, $wgUploadDirectory . $avatarPath);
 					$image->cleanup();
-					$path = $wgUploadPath . $avatarPath;
+					$path = $avatarPath;
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-# Avatar 1.0.0
+# Avatar 1.0.1
 Yet another avatar architecture for MediaWiki
 
 **Note.** There are API changes when upgrading 0.9.2 to 1.0.0. The change is very likely to break your site. See section below for details.
@@ -14,6 +14,7 @@ Yet another avatar architecture for MediaWiki
 * `$wgAllowedAvatarRes` (array), default value is array(64, 128). Thumbnails will be created upon request when their size is in this list.
 * `$wgMaxAvatarResolution` (integer), default value is 256. This limits maximum resolution of image to be uploaded.
 * `$wgDefaultAvatarRes` (integer), default value is 128. This is the fallback option if resolution is not specified.
+* `$wgVersionAvatar` (boolean), default to false. When set to true, each redirect will produce a `ver` parameter in query.
 * You can set user rights: 
 	* `avatarupload`: User need this right to upload ones' own avatar.
 	* `avataradmin`: User need this right to delete others' avatars.
