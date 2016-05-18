@@ -1,13 +1,18 @@
 <?php
+
+// For some configurations, extensions are symbolic linked
+// This is the workaround for ../..
+$dir = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])));
+
 // This switches working directory to the root directory of MediaWiki.
 // This is essential for the page to work
-chdir('../..');
+chdir($dir);
 
 // Start up MediaWiki
-require_once dirname(__FILE__) . '/../../includes/PHPVersionCheck.php';
+require_once 'includes/PHPVersionCheck.php';
 wfEntryPointCheck('avatar.php');
 
-require __DIR__ . '/../../includes/WebStart.php';
+require 'includes/WebStart.php';
 
 // URL safety checks
 if (!$wgRequest->checkUrlExtension()) {
