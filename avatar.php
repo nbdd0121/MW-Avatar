@@ -40,17 +40,19 @@ if (isset($query['user'])) {
 }
 
 // ver will be propagated to the relocated image
-if (isset($query['ver'])) {
-	if (strpos($path, '?') !== false) {
-		$path .= '&ver=' . $query['ver'];
+if ($path !== null) {
+	if (isset($query['ver'])) {
+		if (strpos($path, '?') !== false) {
+			$path .= '&ver=' . $query['ver'];
+		} else {
+			$path .= '?ver=' . $query['ver'];
+		}
 	} else {
-		$path .= '?ver=' . $query['ver'];
-	}
-} else if ($path !== null) {
-	global $wgVersionAvatar;
-	if ($wgVersionAvatar) {
-		global $wgUploadDirectory;
-		$path .= '?ver=' . filemtime($wgUploadDirectory . $path);
+		global $wgVersionAvatar;
+		if ($wgVersionAvatar) {
+			global $wgUploadDirectory;
+			$path .= '?ver=' . filemtime($wgUploadDirectory . $path);
+		}
 	}
 }
 
