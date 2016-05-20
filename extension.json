@@ -79,7 +79,8 @@
 		"AllowedAvatarRes": [64, 128], 
 		"DefaultAvatarRes": 128,
 		"UseAvatar": true,
-		"VersionAvatar": false
+		"VersionAvatar": false,
+		"AvatarServingMethod": "redirect"
 	},
 	"manifest_version": 1
 }

@@ -39,44 +39,83 @@ if (isset($query['user'])) {
 	}
 }
 
-// ver will be propagated to the relocated image
-if ($path !== null) {
+$response = $wgRequest->response();
+
+// In order to maximize cache hit and due to 
+// fact that default avatar might be external,
+// always redirect
+if ($path === null) {
+	// We use send custom header, in order to control cache
+	$response->statusHeader('302');
+
+	if (!isset($query['nocache'])) {
+		// Cache longer time if it is not the default avatar
+		// As it is unlikely to be deleted
+		$response->header('Cache-Control: public, max-age=3600');
+	}
+
+	global $wgDefaultAvatar;
+	$response->header('Location: ' . $wgDefaultAvatar);
+
+	$mediawiki = new MediaWiki();
+	$mediawiki->doPostOutputShutdown('fast');
+	exit;
+}
+
+switch($wgAvatarServingMethod) {
+case 'readfile':
+	global $wgUploadDirectory;
+	$response->header('Cache-Control: public, max-age=86400');
+	$response->header('Content-Type: image/png');
+	readfile($wgUploadDirectory . $path);
+	break;
+case 'accel':
+	global $wgUploadPath;
+	$response->header('Cache-Control: public, max-age=86400');
+	$response->header('Content-Type: image/png');
+	$response->header('X-Accel-Redirect: ' . $wgUploadPath . $path);
+	break;
+case 'sendfile':
+	global $wgUploadDirectory;
+	$response->header('Cache-Control: public, max-age=86400');
+	$response->header('Content-Type: image/png');
+	$response->header('X-SendFile: ' . $wgUploadDirectory . $path);
+	break;
+case 'redirection':
+default:
+	$ver = '';
+
+	// ver will be propagated to the relocated image
 	if (isset($query['ver'])) {
-		if (strpos($path, '?') !== false) {
-			$path .= '&ver=' . $query['ver'];
-		} else {
-			$path .= '?ver=' . $query['ver'];
-		}
+		$ver = $query['ver'];
 	} else {
 		global $wgVersionAvatar;
 		if ($wgVersionAvatar) {
 			global $wgUploadDirectory;
-			$path .= '?ver=' . filemtime($wgUploadDirectory . $path);
+			$ver = filemtime($wgUploadDirectory . $path);
 		}
 	}
-}
 
-$response = $wgRequest->response();
+	if ($ver) {
+		if (strpos($path, '?') !== false) {
+			$path .= '&ver=' . $ver;
+		} else {
+			$path .= '?ver=' . $ver;
+		}
+	}
 
-// We use send custom header, in order to control cache
-$response->statusHeader('302');
+	// We use send custom header, in order to control cache
+	$response->statusHeader('302');
 
-if (!isset($query['nocache'])) {
-	// Cache longer time if it is not the default avatar
-	// As it is unlikely to be deleted
-	if ($path === null) {
-		$response->header('Cache-Control: public, max-age=3600');
-	} else {
+	if (!isset($query['nocache'])) {
+		// Cache longer time if it is not the default avatar
+		// As it is unlikely to be deleted
 		$response->header('Cache-Control: public, max-age=86400');
 	}
-}
 
-if ($path === null) {
-	global $wgDefaultAvatar;
-	$response->header('Location: ' . $wgDefaultAvatar);
-} else {
 	global $wgUploadPath;
 	$response->header('Location: ' . $wgUploadPath . $path);
+	break;
 }
 
 $mediawiki = new MediaWiki();
