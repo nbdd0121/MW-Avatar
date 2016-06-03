@@ -1,4 +1,4 @@
-# Avatar 1.0.1
+# Avatar 1.1.0
 Yet another avatar architecture for MediaWiki
 
 **Note.** There are API changes when upgrading 0.9.2 to 1.0.0. The change is very likely to break your site. See section below for details.
@@ -15,6 +15,11 @@ Yet another avatar architecture for MediaWiki
 * `$wgMaxAvatarResolution` (integer), default value is 256. This limits maximum resolution of image to be uploaded.
 * `$wgDefaultAvatarRes` (integer), default value is 128. This is the fallback option if resolution is not specified.
 * `$wgVersionAvatar` (boolean), default to false. When set to true, each redirect will produce a `ver` parameter in query.
+* `$wgAvatarServingMethod` (string), default to redirect. This indicates the serving method to use when user's avatar is found
+	* `redirect`: Default method, create a 302 redirect to user's true avatar.
+	* `readfile`: Use php's readfile to serve the file directly.
+	* `accel`   : Use nginx's X-Accel-Redirect to serve the file directly.
+	* `sendfile`: Use X-SendFile header to serve the file. Need lighttpd or apache with mod_xsendfile.
 * You can set user rights: 
 	* `avatarupload`: User need this right to upload ones' own avatar.
 	* `avataradmin`: User need this right to delete others' avatars.
