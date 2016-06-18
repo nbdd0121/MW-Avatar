@@ -40,12 +40,14 @@ class SpecialView extends \SpecialPage {
 			// Delete avatar if the user exists
 			if ($userExists) {
 				if (Avatars::deleteAvatar($userObj)) {
+					global $wgAvatarLogInRC;
+
 					$logEntry = new \ManualLogEntry('avatar', 'delete');
 					$logEntry->setPerformer($this->getUser());
 					$logEntry->setTarget($userObj->getUserPage());
 					$logEntry->setComment($opt->getValue('reason'));
 					$logId = $logEntry->insert();
-					$logEntry->publish($logId, 'rcandudp');
+					$logEntry->publish($logId, $wgAvatarLogInRC ? 'rcandudp' : 'udp');
 				}
 			}
 		}
@@ -58,7 +60,7 @@ class SpecialView extends \SpecialPage {
 
 			if ($haveAvatar) {
 				$html = \Xml::tags('img', array(
-					'src' => Avatars::getLinkFor($user, 'original'),
+					'src' => Avatars::getLinkFor($user, 'original') . '&nocache&ver=' . dechex(time()),
 					'height' => 400,
 				), '');
 				$html = \Xml::tags('p', array(), $html);

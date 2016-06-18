@@ -58,7 +58,7 @@ class Avatars {
 
 	public static function hasAvatar(\User $user) {
 		global $wgDefaultAvatar;
-		return self::getAvatar($user, 'original') !== $wgDefaultAvatar;
+		return self::getAvatar($user, 'original') !== null;
 	}
 
 	public static function deleteAvatar(\User $user) {

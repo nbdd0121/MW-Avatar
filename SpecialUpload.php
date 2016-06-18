@@ -99,11 +99,13 @@ class SpecialUpload extends \SpecialPage {
 
 		$this->displayMessage($this->msg('avatar-saved'));
 
+		global $wgAvatarLogInRC;
+
 		$logEntry = new \ManualLogEntry('avatar', 'upload');
 		$logEntry->setPerformer($this->getUser());
 		$logEntry->setTarget($this->getUser()->getUserPage());
 		$logId = $logEntry->insert();
-		$logEntry->publish($logId, 'rcandudp');
+		$logEntry->publish($logId, $wgAvatarLogInRC ? 'rcandudp' : 'udp');
 
 		return true;
 	}

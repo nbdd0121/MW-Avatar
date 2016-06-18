@@ -80,7 +80,8 @@
 		"DefaultAvatarRes": 128,
 		"UseAvatar": true,
 		"VersionAvatar": false,
-		"AvatarServingMethod": "redirect"
+		"AvatarServingMethod": "redirect",
+		"AvatarLogInRC": true
 	},
 	"manifest_version": 1
 }
