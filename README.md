@@ -1,4 +1,4 @@
-# Avatar 1.1.1
+# Avatar 1.2.0
 Yet another avatar architecture for MediaWiki
 
 **Note.** There are API changes when upgrading 0.9.2 to 1.0.0. The change is very likely to break your site. See section below for details.
@@ -21,6 +21,8 @@ Yet another avatar architecture for MediaWiki
 	* `accel`   : Use nginx's X-Accel-Redirect to serve the file directly.
 	* `sendfile`: Use X-SendFile header to serve the file. Need lighttpd or apache with mod_xsendfile.
 * `$wgAvatarLogInRC` (boolean), default to true. When set to true, avatar logs are shown in the recent changes, so it is easier to spot bad avatars and take actions. Set to false can prevent avatar changes from affecting determining active users.
+* `$wgAvatarUploadPath` (string), default to "$wgUploadPath/avatars". This is the (web) path to avatars.
+* `$wgAvatarUploadDirectory` (string), default to "$wgUploadDirectory/avatars". This is the storing path of avatars.
 * You can set user rights: 
 	* `avatarupload`: User need this right to upload ones' own avatar.
 	* `avataradmin`: User need this right to delete others' avatars.

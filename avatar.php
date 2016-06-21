@@ -64,22 +64,22 @@ if ($path === null) {
 
 switch($wgAvatarServingMethod) {
 case 'readfile':
-	global $wgUploadDirectory;
+	global $wgAvatarUploadDirectory;
 	$response->header('Cache-Control: public, max-age=86400');
 	$response->header('Content-Type: image/png');
-	readfile($wgUploadDirectory . $path);
+	readfile($wgAvatarUploadDirectory . $path);
 	break;
 case 'accel':
-	global $wgUploadPath;
+	global $wgAvatarUploadPath;
 	$response->header('Cache-Control: public, max-age=86400');
 	$response->header('Content-Type: image/png');
-	$response->header('X-Accel-Redirect: ' . $wgUploadPath . $path);
+	$response->header('X-Accel-Redirect: ' . $wgAvatarUploadPath . $path);
 	break;
 case 'sendfile':
-	global $wgUploadDirectory;
+	global $wgAvatarUploadDirectory;
 	$response->header('Cache-Control: public, max-age=86400');
 	$response->header('Content-Type: image/png');
-	$response->header('X-SendFile: ' . $wgUploadDirectory . $path);
+	$response->header('X-SendFile: ' . $wgAvatarUploadDirectory . $path);
 	break;
 case 'redirection':
 default:
@@ -91,8 +91,8 @@ default:
 	} else {
 		global $wgVersionAvatar;
 		if ($wgVersionAvatar) {
-			global $wgUploadDirectory;
-			$ver = filemtime($wgUploadDirectory . $path);
+			global $wgAvatarUploadDirectory;
+			$ver = filemtime($wgAvatarUploadDirectory . $path);
 		}
 	}
 
@@ -113,8 +113,8 @@ default:
 		$response->header('Cache-Control: public, max-age=86400');
 	}
 
-	global $wgUploadPath;
-	$response->header('Location: ' . $wgUploadPath . $path);
+	global $wgAvatarUploadPath;
+	$response->header('Location: ' . $wgAvatarUploadPath . $path);
 	break;
 }
 

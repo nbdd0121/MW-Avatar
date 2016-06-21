@@ -84,8 +84,8 @@ class SpecialUpload extends \SpecialPage {
 		Avatars::deleteAvatar($user);
 
 		// Avatar directories
-		global $wgUploadDirectory;
-		$uploadDir = $wgUploadDirectory . '/avatars/' . $this->getUser()->getId() . '/';
+		global $wgAvatarUploadDirectory;
+		$uploadDir = $wgAvatarUploadDirectory . '/' . $this->getUser()->getId() . '/';
 		@mkdir($uploadDir, 0777, true);
 
 		// We do this to convert format to png

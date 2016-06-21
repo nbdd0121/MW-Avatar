@@ -35,18 +35,18 @@ class Avatars {
 
 		// If user exists
 		if ($user && $user->getId()) {
-			global $wgUploadDirectory;
-			$avatarPath = "/avatars/{$user->getId()}/$res.png";
+			global $wgAvatarUploadDirectory;
+			$avatarPath = "/{$user->getId()}/$res.png";
 
 			// Check if requested avatar thumbnail exists
-			if (file_exists($wgUploadDirectory . $avatarPath)) {
+			if (file_exists($wgAvatarUploadDirectory . $avatarPath)) {
 				$path = $avatarPath;
 			} else if ($res !== 'original') {
 				// Dynamically generate upon request
-				$originalAvatarPath = "/avatars/{$user->getId()}/original.png";
-				if (file_exists($wgUploadDirectory . $originalAvatarPath)) {
-					$image = Thumbnail::open($wgUploadDirectory . $originalAvatarPath);
-					$image->createThumbnail($res, $wgUploadDirectory . $avatarPath);
+				$originalAvatarPath = "/{$user->getId()}/original.png";
+				if (file_exists($wgAvatarUploadDirectory . $originalAvatarPath)) {
+					$image = Thumbnail::open($wgAvatarUploadDirectory . $originalAvatarPath);
+					$image->createThumbnail($res, $wgAvatarUploadDirectory . $avatarPath);
 					$image->cleanup();
 					$path = $avatarPath;
 				}
@@ -62,8 +62,8 @@ class Avatars {
 	}
 
 	public static function deleteAvatar(\User $user) {
-		global $wgUploadDirectory;
-		$dirPath = $wgUploadDirectory . "/avatars/{$user->getId()}/";
+		global $wgAvatarUploadDirectory;
+		$dirPath = $wgAvatarUploadDirectory . "/{$user->getId()}/";
 		if (!is_dir($dirPath)) {
 			return false;
 		}

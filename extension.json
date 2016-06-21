@@ -3,7 +3,7 @@
 	"author": "Gary Guo",
 	"url": "https://github.com/nbdd0121/MW-Avatar",
 	"descriptionmsg": "avatar_desc",
-	"version": "1.1.1",
+	"version": "1.2.0",
 	"license-name": "BSD-2-Clause",
 	"type": "specialpage",
 	"ExtensionMessagesFiles": {
@@ -19,6 +19,9 @@
 		"BaseTemplateToolbox": "Avatar\\Hooks::onBaseTemplateToolbox",
 		"SkinTemplateOutputPageBeforeExec": "Avatar\\Hooks::onSkinTemplateOutputPageBeforeExec"
 	},
+	"ExtensionFunctions": [
+		"Avatar\\Hooks::onSetup"
+	],
 	"ResourceModules": {
 		"ext.avatar.upload": {
 			"dependencies": [
@@ -81,7 +84,9 @@
 		"UseAvatar": true,
 		"VersionAvatar": false,
 		"AvatarServingMethod": "redirect",
-		"AvatarLogInRC": true
+		"AvatarLogInRC": true,
+		"AvatarUploadPath": false,
+		"AvatarUploadDirectory": false
 	},
 	"manifest_version": 1
 }

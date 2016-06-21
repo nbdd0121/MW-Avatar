@@ -44,4 +44,18 @@ class Hooks {
 
 		return true;
 	}
+
+	public static function onSetup() {
+		global $wgAvatarUploadPath, $wgAvatarUploadDirectory;
+
+		if ($wgAvatarUploadPath === false) {
+			global $wgUploadPath;
+			$wgAvatarUploadPath = $wgUploadPath . '/avatars';
+		}
+
+		if ($wgAvatarUploadDirectory === false) {
+			global $wgUploadDirectory;
+			$wgAvatarUploadDirectory = $wgUploadDirectory . '/avatars';
+		}
+	}
 }
