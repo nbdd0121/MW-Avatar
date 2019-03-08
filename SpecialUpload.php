@@ -86,7 +86,7 @@ class SpecialUpload extends \SpecialPage {
 		// Avatar directories
 		global $wgAvatarUploadDirectory;
 		$uploadDir = $wgAvatarUploadDirectory . '/' . $this->getUser()->getId() . '/';
-		@mkdir($uploadDir, 0777, true);
+		@mkdir($uploadDir, 0755, true);
 
 		// We do this to convert format to png
 		$img->createThumbnail($wgMaxAvatarResolution, $uploadDir . 'original.png');
