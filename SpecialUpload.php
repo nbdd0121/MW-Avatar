@@ -122,7 +122,7 @@ class SpecialUpload extends \SpecialPage {
 		$html .= \Xml::submitButton($this->msg('uploadavatar-submit')->text());
 
 		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $this->getTitle()->getLinkURL(), 'method' => 'post'), $html);
+		$html = \Xml::tags('form', array('action' => $this->getPageTitle()->getLinkURL(), 'method' => 'post'), $html);
 
 		$this->getOutput()->addWikiMsg('uploadavatar-notice');
 		$this->getOutput()->addHTML($html);
