@@ -10,7 +10,7 @@ class SpecialView extends \SpecialPage {
 	public function execute($par) {
 		// Shortcut by using $par
 		if ($par) {
-			$this->getOutput()->redirect($this->getTitle()->getLinkURL(array(
+			$this->getOutput()->redirect($this->getPageTitle()->getLinkURL(array(
 				'user' => $par,
 			)));
 			return;
@@ -82,7 +82,7 @@ class SpecialView extends \SpecialPage {
 		global $wgScript;
 
 		// This is essential as we need to submit the form to this page
-		$html = \Html::hidden('title', $this->getTitle());
+		$html = \Html::hidden('title', $this->getPageTitle());
 
 		$html .= \Xml::inputLabel(
 			$this->msg('viewavatar-username')->text(),
@@ -111,7 +111,7 @@ class SpecialView extends \SpecialPage {
 		global $wgScript;
 
 		// This is essential as we need to submit the form to this page
-		$html = \Html::hidden('title', $this->getTitle());
+		$html = \Html::hidden('title', $this->getPageTitle());
 		$html .= \Html::hidden('delete', 'true');
 		$html .= \Html::hidden('user', $user);
 
