@@ -16,6 +16,19 @@ class Hooks {
 
 		return true;
 	}
+	
+	public static function onSidebarBeforeOutput(\Skin $skin, &$sidebar) {
+		$user = $skin->getRelevantUser();
+		
+		if ($user) {
+			$sidebar['TOOLBOX'][] = [
+				'text' => wfMessage('sidebar-viewavatar')->text(),
+				'href' => \SpecialPage::getTitleFor('ViewAvatar')->getLocalURL(array(
+					'user' => $user->getName(),
+				)),
+			];
+		}
+	}
 
 	public static function onBaseTemplateToolbox(\BaseTemplate &$baseTemplate, array &$toolbox) {
 		if (isset($baseTemplate->data['nav_urls']['viewavatar'])
@@ -23,26 +36,6 @@ class Hooks {
 			$toolbox['viewavatar'] = $baseTemplate->data['nav_urls']['viewavatar'];
 			$toolbox['viewavatar']['id'] = 't-viewavatar';
 		}
-	}
-
-	public static function onSkinTemplateOutputPageBeforeExec(&$skinTemplate, &$tpl) {
-
-		$user = $skinTemplate->getRelevantUser();
-
-		if ($user) {
-			$nav_urls = $tpl->get('nav_urls');
-
-			$nav_urls['viewavatar'] = [
-				'text' => wfMessage('sidebar-viewavatar')->text(),
-				'href' => \SpecialPage::getTitleFor('ViewAvatar')->getLocalURL(array(
-					'user' => $user->getName(),
-				)),
-			];
-
-			$tpl->set('nav_urls', $nav_urls);
-		}
-
-		return true;
 	}
 
 	public static function onSetup() {
