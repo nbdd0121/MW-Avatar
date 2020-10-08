@@ -17,7 +17,8 @@
 	"Hooks": {
 		"GetPreferences": "Avatar\\Hooks::onGetPreferences",
 		"BaseTemplateToolbox": "Avatar\\Hooks::onBaseTemplateToolbox",
-		"SkinTemplateOutputPageBeforeExec": "Avatar\\Hooks::onSkinTemplateOutputPageBeforeExec"
+		"SkinTemplateOutputPageBeforeExec": "Avatar\\Hooks::onSkinTemplateOutputPageBeforeExec",
+		"SidebarBeforeOutput": "Avatar\\Hooks::onSidebarBeforeOutput"
 	},
 	"ExtensionFunctions": [
 		"Avatar\\Hooks::onSetup"
