@@ -1,10 +1,13 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\MediaWikiServices;
+
 class Hooks {
 
 	public static function onGetPreferences(\User $user, &$preferences) {
-		$link = \Linker::link(\SpecialPage::getTitleFor("UploadAvatar"), wfMessage('uploadavatar')->text());
+		$link = MediaWikiServices::getInstance()->getLinkRenderer()
+			->makeLink(\SpecialPage::getTitleFor("UploadAvatar"), wfMessage('uploadavatar')->text());
 
 		$preferences['editavatar'] = array(
 			'type' => 'info',
