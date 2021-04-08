@@ -14,11 +14,6 @@ wfEntryPointCheck('avatar.php');
 
 require 'includes/WebStart.php';
 
-// URL safety checks
-if (!$wgRequest->checkUrlExtension()) {
-	return;
-}
-
 $query = $wgRequest->getQueryValues();
 
 $path = null;
@@ -41,7 +36,7 @@ if (isset($query['user'])) {
 
 $response = $wgRequest->response();
 
-// In order to maximize cache hit and due to 
+// In order to maximize cache hit and due to
 // fact that default avatar might be external,
 // always redirect
 if ($path === null) {
