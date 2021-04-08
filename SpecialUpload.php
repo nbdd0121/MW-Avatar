@@ -14,7 +14,7 @@ class SpecialUpload extends \SpecialPage {
 		$this->outputHeader();
 		$request = $this->getRequest();
 
-		if ($this->getUser()->isBlocked()) {
+		if ($this->getUser()->getBlock()) {
 			throw new \UserBlockedError($this->getUser()->getBlock());
 		}
 
