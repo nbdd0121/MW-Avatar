@@ -1,6 +1,8 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\MediaWikiServices;
+
 class SpecialUpload extends \SpecialPage {
 
 	public function __construct() {
@@ -18,7 +20,7 @@ class SpecialUpload extends \SpecialPage {
 			throw new \UserBlockedError($this->getUser()->getBlock());
 		}
 
-		if (!$this->getUser()->isAllowed('avatarupload')) {
+		if (!MediaWikiServices::getInstance()->getPermissionManager()->userHasRight($this->getUser(), 'avatarupload')) {
 			throw new \PermissionsError('avatarupload');
 		}
 

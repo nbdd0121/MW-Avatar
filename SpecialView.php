@@ -1,6 +1,8 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\MediaWikiServices;
+
 class SpecialView extends \SpecialPage {
 
 	public function __construct() {
@@ -32,7 +34,7 @@ class SpecialView extends \SpecialPage {
 		$userExists = $userObj && $userObj->getId() !== 0;
 
 		// If current task is delete and user is not allowed
-		$canDoAdmin = $this->getUser()->isAllowed('avataradmin');
+		$canDoAdmin = MediaWikiServices::getInstance()->getPermissionManager()->userHasRight($this->getUser(), 'avataradmin');
 		if ($opt->getValue('delete')) {
 			if (!$canDoAdmin) {
 				throw new \PermissionsError('avataradmin');
