@@ -2,6 +2,8 @@
 
 // For some configurations, extensions are symbolic linked
 // This is the workaround for ../..
+use MediaWiki\MediaWikiServices;
+
 $dir = dirname(dirname(dirname($_SERVER['SCRIPT_FILENAME'])));
 
 // This switches working directory to the root directory of MediaWiki.
@@ -28,7 +30,7 @@ if (isset($query['user'])) {
 		$res = $wgDefaultAvatarRes;
 	}
 
-	$user = User::newFromName($username);
+	$user = MediaWikiServices::getInstance()->getUserFactory()->newFromName($username);
 	if ($user) {
 		$path = \Avatar\Avatars::getAvatar($user, $res);
 	}

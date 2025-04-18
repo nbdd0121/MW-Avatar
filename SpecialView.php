@@ -1,7 +1,10 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\Html\FormOptions;
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Xml\Xml;
 
 class SpecialView extends \SpecialPage {
 
@@ -22,7 +25,7 @@ class SpecialView extends \SpecialPage {
 		$this->outputHeader();
 
 		// Parse options
-		$opt = new \FormOptions;
+		$opt = new FormOptions;
 		$opt->add('user', '');
 		$opt->add('delete', '');
 		$opt->add('reason', '');
@@ -30,7 +33,7 @@ class SpecialView extends \SpecialPage {
 
 		// Parse user
 		$user = $opt->getValue('user');
-		$userObj = \User::newFromName($user);
+		$userObj = MediaWikiServices::getInstance()->getUserFactory()->newFromName($user);
 		$userExists = $userObj && $userObj->getId() !== 0;
 
 		// If current task is delete and user is not allowed
@@ -61,11 +64,11 @@ class SpecialView extends \SpecialPage {
 			$haveAvatar = Avatars::hasAvatar($userObj);
 
 			if ($haveAvatar) {
-				$html = \Xml::tags('img', array(
+				$html = Xml::tags('img', array(
 					'src' => Avatars::getLinkFor($user, 'original') . '&nocache&ver=' . dechex(time()),
 					'height' => 400,
 				), '');
-				$html = \Xml::tags('p', array(), $html);
+				$html = Xml::tags('p', array(), $html);
 				$this->getOutput()->addHTML($html);
 
 				// Add a delete button
@@ -84,27 +87,26 @@ class SpecialView extends \SpecialPage {
 		global $wgScript;
 
 		// This is essential as we need to submit the form to this page
-		$html = \Html::hidden('title', $this->getPageTitle());
+		$html = Html::hidden('title', $this->getPageTitle());
 
-		$html .= \Xml::inputLabel(
-			$this->msg('viewavatar-username')->text(),
-			'user',
-			'',
-			45,
-			$user,
-			array('class' => 'mw-autocomplete-user') # This together with mediawiki.userSuggest will give us an auto completion
-		);
+		$html .= Html::label($this->msg('viewavatar-username')->text(), 'ext-avatar-username');
+		$html .= Html::input('user', $user, 'text', [
+			'class' => 'mw-autocomplete-user',
+			'size' => 45,
+			'id' => 'ext-avatar-username', # This together with mediawiki.userSuggest will give us an auto completion
+		]);
 
 		$html .= ' ';
 
 		// Submit button
-		$html .= \Xml::submitButton($this->msg('viewavatar-submit')->text());
+		$html .= Html::submitButton($this->msg('viewavatar-submit')->text());
 
-		// Fieldset
-		$html = \Xml::fieldset($this->msg('viewavatar-legend')->text(), $html);
+		// Warp Fieldset
+		$legend = Html::element('legend', [], $this->msg('viewavatar-legend')->text());
+		$html = Html::openElement('fieldset') . $legend . $html . Html::closeElement('fieldset');
 
 		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
+		$html = Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
 
 		$this->getOutput()->addHTML($html);
 	}
@@ -113,27 +115,24 @@ class SpecialView extends \SpecialPage {
 		global $wgScript;
 
 		// This is essential as we need to submit the form to this page
-		$html = \Html::hidden('title', $this->getPageTitle());
-		$html .= \Html::hidden('delete', 'true');
-		$html .= \Html::hidden('user', $user);
+		$html = Html::hidden('title', $this->getPageTitle());
+		$html .= Html::hidden('delete', 'true');
+		$html .= Html::hidden('user', $user);
 
-		$html .= \Xml::inputLabel(
-			$this->msg('viewavatar-delete-reason')->text(),
-			'reason',
-			'',
-			45
-		);
+		$html .= Html::label($this->msg('viewavatar-delete-reason')->text(), 'ext-avatar-reason');
+		$html .= Html::input('reason', '', 'text', ['size' => 45, 'id' => 'ext-avatar-reason']);
 
 		$html .= ' ';
 
 		// Submit button
-		$html .= \Xml::submitButton($this->msg('viewavatar-delete-submit')->text());
+		$html .= Html::submitButton($this->msg('viewavatar-delete-submit')->text());
 
-		// Fieldset
-		$html = \Xml::fieldset($this->msg('viewavatar-delete-legend')->text(), $html);
+		// Warp Fieldset
+		$legend = Html::element('legend', [], $this->msg('viewavatar-delete-legend')->text());
+		$html = Html::openElement('fieldset') . $legend . $html . Html::closeElement('fieldset');
 
 		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
+		$html = Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
 
 		$this->getOutput()->addHTML($html);
 	}

@@ -1,7 +1,9 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\Html\Html;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Xml\Xml;
 
 class SpecialUpload extends \SpecialPage {
 
@@ -39,7 +41,7 @@ class SpecialUpload extends \SpecialPage {
 	}
 
 	private function displayMessage($msg) {
-		$this->getOutput()->addHTML(\Html::rawElement('div', array('class' => 'error', 'id' => 'errorMsg'), $msg));
+		$this->getOutput()->addHTML(Html::rawElement('div', array('class' => 'error', 'id' => 'errorMsg'), $msg));
 	}
 
 	private function processUpload() {
@@ -114,17 +116,17 @@ class SpecialUpload extends \SpecialPage {
 
 	public function displayForm() {
 		$html = '<p></p>';
-		$html .= \Html::hidden('avatar', '');
+		$html .= Html::hidden('avatar', '');
 
-		$html .= \Xml::element('button', array('id' => 'pickfile'), $this->msg('uploadavatar-selectfile'));
+		$html .= Xml::element('button', array('id' => 'pickfile'), $this->msg('uploadavatar-selectfile'));
 
 		$html .= ' ';
 
 		// Submit button
-		$html .= \Xml::submitButton($this->msg('uploadavatar-submit')->text());
+		$html .= Xml::submitButton($this->msg('uploadavatar-submit')->text());
 
 		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $this->getPageTitle()->getLinkURL(), 'method' => 'post'), $html);
+		$html = Xml::tags('form', array('action' => $this->getPageTitle()->getLinkURL(), 'method' => 'post'), $html);
 
 		$this->getOutput()->addWikiMsg('uploadavatar-notice');
 		$this->getOutput()->addHTML($html);
