@@ -1,16 +1,17 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\User\UserIdentity;
+
 class Avatars {
 
 	public static function getLinkFor($username, $res = false) {
 		global $wgScriptPath;
-		$path = "$wgScriptPath/extensions/Avatar/avatar.php?user=$username";
+		$query = ['user' => $username];
 		if ($res !== false) {
-			return $path . '&res=' . $res;
-		} else {
-			return $path;
+			$query['res'] = $res;
 		}
+		return "$wgScriptPath/extensions/Avatar/avatar.php?" . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
 	}
 
 	public static function normalizeResolution($res) {
@@ -29,50 +30,104 @@ class Avatars {
 		return 'original';
 	}
 
-	public static function getAvatar(\User $user, $res) {
-		global $wgDefaultAvatarRes;
-		$path = null;
-
-		// If user exists
-		if ($user && $user->getId()) {
-			global $wgAvatarUploadDirectory;
-			$avatarPath = "/{$user->getId()}/$res.png";
-
-			// Check if requested avatar thumbnail exists
-			if (file_exists($wgAvatarUploadDirectory . $avatarPath)) {
-				$path = $avatarPath;
-			} else if ($res !== 'original') {
-				// Dynamically generate upon request
-				$originalAvatarPath = "/{$user->getId()}/original.png";
-				if (file_exists($wgAvatarUploadDirectory . $originalAvatarPath)) {
-					$image = Thumbnail::open($wgAvatarUploadDirectory . $originalAvatarPath);
-					$image->createThumbnail($res, $wgAvatarUploadDirectory . $avatarPath);
-					$image->cleanup();
-					$path = $avatarPath;
-				}
-			}
+	public static function getAvatar(UserIdentity $user, $res) {
+		$userId = $user->getId();
+		if (!$userId) {
+			return null;
 		}
 
-		return $path;
+		global $wgAvatarUploadDirectory;
+		$directory = "$wgAvatarUploadDirectory/$userId/";
+		$original = $directory . 'original.png';
+		if (!is_file($original)) {
+			return null;
+		}
+
+		$avatarPath = "/$userId/$res.png";
+		$avatarFile = $wgAvatarUploadDirectory . $avatarPath;
+		if (is_file($avatarFile)) {
+			return $avatarPath;
+		}
+		if ($res === 'original') {
+			return null;
+		}
+
+		return self::withAvatarLock($directory, static function () use ($avatarFile, $avatarPath, $original, $res) {
+			clearstatcache();
+			if (!is_file($avatarFile)) {
+				$image = is_file($original) ? Thumbnail::open($original) : null;
+				if ($image === null) {
+					return null;
+				}
+				$image->createThumbnail($res, $avatarFile);
+			}
+			return $avatarPath;
+		});
 	}
 
-	public static function hasAvatar(\User $user) {
-		global $wgDefaultAvatar;
+	public static function hasAvatar(UserIdentity $user) {
 		return self::getAvatar($user, 'original') !== null;
 	}
 
-	public static function deleteAvatar(\User $user) {
+	public static function storeAvatar(UserIdentity $user, Thumbnail $image, int $maxResolution): void {
 		global $wgAvatarUploadDirectory;
-		$dirPath = $wgAvatarUploadDirectory . "/{$user->getId()}/";
-		if (!is_dir($dirPath)) {
+		$directory = $wgAvatarUploadDirectory . "/{$user->getId()}/";
+		if (!is_dir($directory) && !@mkdir($directory, 0755, true) && !is_dir($directory)) {
+			throw new \RuntimeException('Could not create the avatar upload directory');
+		}
+		self::withAvatarLock($directory, static function () use ($directory, $image, $maxResolution) {
+			self::clearThumbnails($directory);
+			$image->createThumbnail($maxResolution, $directory . 'original.png');
+		});
+	}
+
+	public static function deleteAvatar(UserIdentity $user): bool {
+		global $wgAvatarUploadDirectory;
+		$directory = $wgAvatarUploadDirectory . "/{$user->getId()}/";
+		$original = $directory . 'original.png';
+		if (!is_file($original)) {
 			return false;
 		}
-		$files = glob($dirPath . '*', GLOB_MARK);
-		foreach ($files as $file) {
-			unlink($file);
+
+		return self::withAvatarLock($directory, static function () use ($directory, $original) {
+			clearstatcache();
+			if (!is_file($original)) {
+				return false;
+			}
+			self::clearThumbnails($directory);
+			if (!unlink($original)) {
+				throw new \RuntimeException('Could not delete the avatar');
+			}
+			return true;
+		});
+	}
+
+	private static function clearThumbnails(string $directory): void {
+		$files = glob($directory . '[0-9]*.png');
+		if ($files === false) {
+			throw new \RuntimeException('Could not list avatar thumbnails');
 		}
-		rmdir($dirPath);
-		return true;
+		foreach ($files as $file) {
+			if (!@unlink($file) && is_file($file)) {
+				throw new \RuntimeException('Could not remove an old avatar thumbnail');
+			}
+		}
+	}
+
+	// Keep the lock file in place so all writers synchronize on the same inode.
+	private static function withAvatarLock(string $directory, callable $callback) {
+		$lock = fopen($directory . '.avatar.lock', 'c');
+		if ($lock === false) {
+			throw new \RuntimeException('Could not open the avatar lock file');
+		}
+		try {
+			if (!flock($lock, LOCK_EX)) {
+				throw new \RuntimeException('Could not lock the avatar');
+			}
+			return $callback();
+		} finally {
+			fclose($lock);
+		}
 	}
 
 }

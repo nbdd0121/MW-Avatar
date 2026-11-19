@@ -6,6 +6,12 @@
 	"version": "1.2.0",
 	"license-name": "BSD-2-Clause",
 	"type": "specialpage",
+	"requires": {
+		"MediaWiki": ">= 1.44.0",
+		"platform": {
+			"ext-gd": "*"
+		}
+	},
 	"ExtensionMessagesFiles": {
 		"AvatarAlias": "Avatar.alias.php"
 	},
@@ -16,7 +22,6 @@
 	},
 	"Hooks": {
 		"GetPreferences": "Avatar\\Hooks::onGetPreferences",
-		"BaseTemplateToolbox": "Avatar\\Hooks::onBaseTemplateToolbox",
 		"SidebarBeforeOutput": "Avatar\\Hooks::onSidebarBeforeOutput"
 	},
 	"ExtensionFunctions": [
@@ -24,9 +29,6 @@
 	],
 	"ResourceModules": {
 		"ext.avatar.upload": {
-			"dependencies": [
-				"mediawiki.user"
-			],
 			"scripts":[
 				"assets/upload.js"
 			],
@@ -47,6 +49,7 @@
 		"Avatar\\Thumbnail": "Thumbnail.php",
 		"Avatar\\SpecialUpload": "SpecialUpload.php",
 		"Avatar\\SpecialView": "SpecialView.php",
+		"Avatar\\SpecialAvatarRedirect": "SpecialAvatarRedirect.php",
 		"Avatar\\UploadLogFormatter": "includes/UploadLogFormatter.php"
 	},
 	"ResourceFileModulePaths": {
@@ -55,7 +58,8 @@
 	},
 	"SpecialPages": {
 		"UploadAvatar": "Avatar\\SpecialUpload",
-		"ViewAvatar": "Avatar\\SpecialView"
+		"ViewAvatar": "Avatar\\SpecialView",
+		"AvatarRedirect": "Avatar\\SpecialAvatarRedirect"
 	},
 	"AvailableRights": [
 		"avatarupload",
@@ -74,7 +78,7 @@
 	],
 	"LogActionsHandlers": {
 		"avatar/upload": "Avatar\\UploadLogFormatter",
-		"avatar/delete": "LogFormatter"
+		"avatar/delete": "MediaWiki\\Logging\\LogFormatter"
 	},
 	"config": {
 		"DefaultAvatar": "http://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm&f=y",

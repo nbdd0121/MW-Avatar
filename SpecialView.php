@@ -1,140 +1,116 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Html\Html;
+use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\SpecialPage\SpecialPage;
+use MediaWiki\User\User;
 
-class SpecialView extends \SpecialPage {
+class SpecialView extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct('ViewAvatar');
 	}
 
 	public function execute($par) {
-		// Shortcut by using $par
+		$output = $this->getOutput();
 		if ($par) {
-			$this->getOutput()->redirect($this->getPageTitle()->getLinkURL(array(
-				'user' => $par,
-			)));
+			$output->redirect($this->getPageTitle()->getLinkURL(['user' => $par]));
 			return;
 		}
 
 		$this->setHeaders();
 		$this->outputHeader();
+		$request = $this->getRequest();
+		$username = $request->getText('user');
+		$user = $username === '' ? null : MediaWikiServices::getInstance()
+			->getUserFactory()->newFromName($username);
+		$userExists = $user && $user->isRegistered();
+		$canDelete = $this->getAuthority()->isAllowed('avataradmin');
 
-		// Parse options
-		$opt = new \FormOptions;
-		$opt->add('user', '');
-		$opt->add('delete', '');
-		$opt->add('reason', '');
-		$opt->fetchValuesFromRequest($this->getRequest());
-
-		// Parse user
-		$user = $opt->getValue('user');
-		$userObj = \User::newFromName($user);
-		$userExists = $userObj && $userObj->getId() !== 0;
-
-		// If current task is delete and user is not allowed
-		$canDoAdmin = MediaWikiServices::getInstance()->getPermissionManager()->userHasRight($this->getUser(), 'avataradmin');
-		if ($opt->getValue('delete')) {
-			if (!$canDoAdmin) {
-				throw new \PermissionsError('avataradmin');
+		if ($request->wasPosted() && $request->getBool('delete')) {
+			if (!$canDelete) {
+				throw new PermissionsError('avataradmin');
 			}
-			// Delete avatar if the user exists
-			if ($userExists) {
-				if (Avatars::deleteAvatar($userObj)) {
-					global $wgAvatarLogInRC;
-
-					$logEntry = new \ManualLogEntry('avatar', 'delete');
-					$logEntry->setPerformer($this->getUser());
-					$logEntry->setTarget($userObj->getUserPage());
-					$logEntry->setComment($opt->getValue('reason'));
-					$logId = $logEntry->insert();
-					$logEntry->publish($logId, $wgAvatarLogInRC ? 'rcandudp' : 'udp');
-				}
-			}
-		}
-
-		$this->getOutput()->addModules(array('mediawiki.userSuggest'));
-		$this->showForm($user);
-
-		if ($userExists) {
-			$haveAvatar = Avatars::hasAvatar($userObj);
-
-			if ($haveAvatar) {
-				$html = \Xml::tags('img', array(
-					'src' => Avatars::getLinkFor($user, 'original') . '&nocache&ver=' . dechex(time()),
-					'height' => 400,
-				), '');
-				$html = \Xml::tags('p', array(), $html);
-				$this->getOutput()->addHTML($html);
-
-				// Add a delete button
-				if ($canDoAdmin) {
-					$this->showDeleteForm($user);
-				}
+			$this->checkReadOnly();
+			if (!$this->getUser()->matchEditToken($request->getVal('wpEditToken'), 'avatar-delete', $request)) {
+				$output->addWikiMsg('sessionfailure');
 			} else {
-				$this->getOutput()->addWikiMsg('viewavatar-noavatar');
+				if ($userExists && Avatars::deleteAvatar($user)) {
+					$this->logDeletion($user, $request->getText('reason'));
+				}
+				$output->redirect($this->getPageTitle()->getLinkURL(['user' => $username]), 303);
+				return;
 			}
-		} else if ($user) {
-			$this->getOutput()->addWikiMsg('viewavatar-nouser');
+		}
+
+		$output->addModules('mediawiki.userSuggest');
+		$this->showForm($username);
+		if (!$userExists) {
+			if ($username !== '') {
+				$output->addWikiMsg('viewavatar-nouser');
+			}
+			return;
+		}
+		if (!Avatars::hasAvatar($user)) {
+			$output->addWikiMsg('viewavatar-noavatar');
+			return;
+		}
+
+		$image = Html::element('img', [
+			'src' => Avatars::getLinkFor($user->getName(), 'original') . '&nocache&ver=' . dechex(time()),
+			'alt' => $user->getName(),
+			'height' => 400,
+		]);
+		$output->addHTML(Html::rawElement('p', [], $image));
+		if ($canDelete) {
+			$this->showDeleteForm($user->getName());
 		}
 	}
 
-	private function showForm($user) {
-		global $wgScript;
-
-		// This is essential as we need to submit the form to this page
-		$html = \Html::hidden('title', $this->getPageTitle());
-
-		$html .= \Xml::inputLabel(
-			$this->msg('viewavatar-username')->text(),
-			'user',
-			'',
-			45,
-			$user,
-			array('class' => 'mw-autocomplete-user') # This together with mediawiki.userSuggest will give us an auto completion
-		);
-
-		$html .= ' ';
-
-		// Submit button
-		$html .= \Xml::submitButton($this->msg('viewavatar-submit')->text());
-
-		// Fieldset
-		$html = \Xml::fieldset($this->msg('viewavatar-legend')->text(), $html);
-
-		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
-
-		$this->getOutput()->addHTML($html);
+	private function logDeletion(User $user, string $reason) {
+		$logEntry = new ManualLogEntry('avatar', 'delete');
+		$logEntry->setPerformer($this->getUser());
+		$logEntry->setTarget($user->getUserPage());
+		$logEntry->setComment($reason);
+		$logId = $logEntry->insert();
+		$logEntry->publish($logId, $this->getConfig()->get('AvatarLogInRC') ? 'rcandudp' : 'udp');
 	}
 
-	private function showDeleteForm($user) {
-		global $wgScript;
+	private function showForm(string $username) {
+		$html = Html::hidden('title', $this->getPageTitle()->getPrefixedText());
+		$html .= Html::label($this->msg('viewavatar-username')->text(), 'avatar-username');
+		$html .= Html::input('user', $username, 'text', [
+			'id' => 'avatar-username',
+			'class' => 'mw-autocomplete-user',
+			'size' => 45,
+			'required' => true,
+		]);
+		$html .= ' ' . Html::submitButton($this->msg('viewavatar-submit')->text());
+		$this->addForm($html, 'get', 'viewavatar-legend');
+	}
 
-		// This is essential as we need to submit the form to this page
-		$html = \Html::hidden('title', $this->getPageTitle());
-		$html .= \Html::hidden('delete', 'true');
-		$html .= \Html::hidden('user', $user);
+	private function showDeleteForm(string $username) {
+		$html = Html::hidden('title', $this->getPageTitle()->getPrefixedText());
+		$html .= Html::hidden('delete', '1');
+		$html .= Html::hidden('user', $username);
+		$html .= Html::hidden('wpEditToken', $this->getUser()->getEditToken('avatar-delete', $this->getRequest()));
+		$html .= Html::label($this->msg('viewavatar-delete-reason')->text(), 'avatar-delete-reason');
+		$html .= Html::input('reason', '', 'text', ['id' => 'avatar-delete-reason', 'size' => 45]);
+		$html .= ' ' . Html::submitButton($this->msg('viewavatar-delete-submit')->text());
+		$this->addForm($html, 'post', 'viewavatar-delete-legend');
+	}
 
-		$html .= \Xml::inputLabel(
-			$this->msg('viewavatar-delete-reason')->text(),
-			'reason',
-			'',
-			45
-		);
-
-		$html .= ' ';
-
-		// Submit button
-		$html .= \Xml::submitButton($this->msg('viewavatar-delete-submit')->text());
-
-		// Fieldset
-		$html = \Xml::fieldset($this->msg('viewavatar-delete-legend')->text(), $html);
-
-		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $wgScript, 'method' => 'get'), $html);
-
-		$this->getOutput()->addHTML($html);
+	private function addForm(string $html, string $method, string $legend) {
+		$legendId = $legend . '-label';
+		$heading = Html::element('legend', ['id' => $legendId], $this->msg($legend)->text());
+		$fieldset = Html::rawElement('fieldset', [], $heading . $html);
+		$this->getOutput()->addHTML(Html::rawElement('form', [
+			'action' => $this->getConfig()->get('Script'),
+			'method' => $method,
+			'aria-labelledby' => $legendId,
+		], $fieldset));
 	}
 }

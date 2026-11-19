@@ -1,9 +1,13 @@
 <?php
 namespace Avatar;
 
-use MediaWiki\MediaWikiServices;
+use MediaWiki\Exception\PermissionsError;
+use MediaWiki\Exception\UserBlockedError;
+use MediaWiki\Html\Html;
+use MediaWiki\Logging\ManualLogEntry;
+use MediaWiki\SpecialPage\SpecialPage;
 
-class SpecialUpload extends \SpecialPage {
+class SpecialUpload extends SpecialPage {
 
 	public function __construct() {
 		parent::__construct('UploadAvatar');
@@ -16,21 +20,31 @@ class SpecialUpload extends \SpecialPage {
 		$this->outputHeader();
 		$request = $this->getRequest();
 
-		if ($this->getUser()->getBlock()) {
-			throw new \UserBlockedError($this->getUser()->getBlock());
+		$user = $this->getUser();
+		$block = $user->getBlock();
+		if ($block) {
+			throw new UserBlockedError($block);
 		}
 
-		if (!MediaWikiServices::getInstance()->getPermissionManager()->userHasRight($this->getUser(), 'avatarupload')) {
-			throw new \PermissionsError('avatarupload');
+		if (!$this->getAuthority()->isAllowed('avatarupload')) {
+			throw new PermissionsError('avatarupload');
 		}
 
-		global $wgMaxAvatarResolution;
-		$this->getOutput()->addJsConfigVars('wgMaxAvatarResolution', $wgMaxAvatarResolution);
-		$this->getOutput()->addModules('ext.avatar.upload');
+		$output = $this->getOutput();
+		$output->addJsConfigVars([
+			'wgMaxAvatarResolution' => $this->getConfig()->get('MaxAvatarResolution'),
+			'wgAvatarCurrentPreviewUrl' => Avatars::getLinkFor($user->getName(), 'original')
+				. '&nocache&ver=' . dechex(time()),
+		]);
+		$output->addModules('ext.avatar.upload');
 
 		if ($request->wasPosted()) {
-			if ($this->processUpload()) {
-				$this->getOutput()->redirect(\SpecialPage::getTitleFor('Preferences')->getLinkURL());
+			$this->checkReadOnly();
+			if (!$user->matchEditToken($request->getVal('wpEditToken'), 'avatar-upload', $request)) {
+				$this->displayMessage($this->msg('sessionfailure')->text());
+			} elseif ($this->processUpload()) {
+				$output->redirect(SpecialPage::getTitleFor('Preferences')->getLinkURL(), 303);
+				return;
 			}
 		} else {
 			$this->displayMessage('');
@@ -39,92 +53,71 @@ class SpecialUpload extends \SpecialPage {
 	}
 
 	private function displayMessage($msg) {
-		$this->getOutput()->addHTML(\Html::rawElement('div', array('class' => 'error', 'id' => 'errorMsg'), $msg));
+		$this->getOutput()->addHTML(Html::element('div', ['class' => 'error', 'id' => 'errorMsg'], $msg));
 	}
 
 	private function processUpload() {
 		$request = $this->getRequest();
-		$dataurl = $request->getVal('avatar');
+		$dataurl = $request->getRawVal('avatar');
 		if (!$dataurl || parse_url($dataurl, PHP_URL_SCHEME) !== 'data') {
-			$this->displayMessage($this->msg('avatar-notuploaded'));
+			$this->displayMessage($this->msg('avatar-notuploaded')->text());
 			return false;
 		}
 
-		$img = Thumbnail::open($dataurl);
-
-		global $wgMaxAvatarResolution;
-
-		switch ($img->type) {
-		case IMAGETYPE_GIF:
-		case IMAGETYPE_PNG:
-		case IMAGETYPE_JPEG:
-			break;
-		default:
-			$this->displayMessage($this->msg('avatar-invalid'));
+		$info = @getimagesize($dataurl);
+		if (!$info || !in_array($info[2], [IMAGETYPE_GIF, IMAGETYPE_PNG, IMAGETYPE_JPEG], true)) {
+			$this->displayMessage($this->msg('avatar-invalid')->text());
 			return false;
 		}
+		[$width, $height] = $info;
+		$config = $this->getConfig();
+		$maxResolution = $config->get('MaxAvatarResolution');
 
-		// Must be square
-		if ($img->width !== $img->height) {
-			$this->displayMessage($this->msg('avatar-notsquare'));
+		if ($width !== $height) {
+			$this->displayMessage($this->msg('avatar-notsquare')->text());
 			return false;
 		}
-
-		// Check if image is too small
-		if ($img->width < 32 || $img->height < 32) {
-			$this->displayMessage($this->msg('avatar-toosmall'));
+		if ($width < 32) {
+			$this->displayMessage($this->msg('avatar-toosmall')->text());
 			return false;
 		}
-
-		// Check if image is too big
-		if ($img->width > $wgMaxAvatarResolution || $img->height > $wgMaxAvatarResolution) {
-			$this->displayMessage($this->msg('avatar-toolarge'));
+		if ($width > $maxResolution) {
+			$this->displayMessage($this->msg('avatar-toolarge')->text());
+			return false;
+		}
+		$image = Thumbnail::open($dataurl, $info);
+		if ($image === null) {
+			$this->displayMessage($this->msg('avatar-invalid')->text());
 			return false;
 		}
 
 		$user = $this->getUser();
-		Avatars::deleteAvatar($user);
+		Avatars::storeAvatar($user, $image, $maxResolution);
 
-		// Avatar directories
-		global $wgAvatarUploadDirectory;
-		$uploadDir = $wgAvatarUploadDirectory . '/' . $this->getUser()->getId() . '/';
-		@mkdir($uploadDir, 0755, true);
-
-		// We do this to convert format to png
-		$img->createThumbnail($wgMaxAvatarResolution, $uploadDir . 'original.png');
-
-		// We only create thumbnail with default resolution here. Others are generated on demand
-		global $wgDefaultAvatarRes;
-		$img->createThumbnail($wgDefaultAvatarRes, $uploadDir . $wgDefaultAvatarRes . '.png');
-
-		$img->cleanup();
-
-		$this->displayMessage($this->msg('avatar-saved'));
-
-		global $wgAvatarLogInRC;
-
-		$logEntry = new \ManualLogEntry('avatar', 'upload');
-		$logEntry->setPerformer($this->getUser());
-		$logEntry->setTarget($this->getUser()->getUserPage());
+		$logEntry = new ManualLogEntry('avatar', 'upload');
+		$logEntry->setPerformer($user);
+		$logEntry->setTarget($user->getUserPage());
 		$logId = $logEntry->insert();
-		$logEntry->publish($logId, $wgAvatarLogInRC ? 'rcandudp' : 'udp');
+		$logEntry->publish($logId, $config->get('AvatarLogInRC') ? 'rcandudp' : 'udp');
 
 		return true;
 	}
 
 	public function displayForm() {
-		$html = '<p></p>';
-		$html .= \Html::hidden('avatar', '');
-
-		$html .= \Xml::element('button', array('id' => 'pickfile'), $this->msg('uploadavatar-selectfile'));
-
-		$html .= ' ';
-
-		// Submit button
-		$html .= \Xml::submitButton($this->msg('uploadavatar-submit')->text());
-
-		// Wrap with a form
-		$html = \Xml::tags('form', array('action' => $this->getPageTitle()->getLinkURL(), 'method' => 'post'), $html);
+		$html = Html::hidden('avatar', '');
+		$html .= Html::hidden('wpEditToken', $this->getUser()->getEditToken('avatar-upload', $this->getRequest()));
+		$html .= Html::element('input', [
+			'id' => 'avatar-file',
+			'type' => 'file',
+			'accept' => 'image/*',
+			'aria-label' => $this->msg('uploadavatar-selectfile')->text(),
+		]);
+		$html .= ' ' . Html::submitButton($this->msg('uploadavatar-submit')->text());
+		$html = Html::rawElement('form', [
+			'id' => 'avatar-upload-form',
+			'action' => $this->getPageTitle()->getLinkURL(),
+			'method' => 'post',
+		], $html);
 
 		$this->getOutput()->addWikiMsg('uploadavatar-notice');
 		$this->getOutput()->addHTML($html);
