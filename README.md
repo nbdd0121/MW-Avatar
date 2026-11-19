@@ -4,10 +4,13 @@ Yet another avatar architecture for MediaWiki
 **Note.** There are API changes when upgrading 0.9.2 to 1.0.0. The change is very likely to break your site. See section below for details.
 
 ## Install
-* Install php-gd, which is a dependency of this extension
-* Clone the respository, rename it to Avatar and copy to extensions folder
-* Add `wfLoadExtension('Avatar')`; to your LocalSettings.php
-* You are done!
+
+* Use MediaWiki 1.47 (or its release candidate) and PHP with GD, PNG, JPEG, and GIF support.
+* Check out the `REL1_47` branch in `extensions/Avatar`.
+* Add `wfLoadExtension( 'Avatar' );` to `LocalSettings.php`.
+* Give the web server write access to the avatar upload directory.
+
+Existing avatar files and `avatar.php` URLs continue to work with this branch.
 
 ## Configuration
 * `$wgDefaultAvatar` (string), should be set to the URL of the default avatar.
@@ -32,7 +35,7 @@ Yet another avatar architecture for MediaWiki
 * You can set alias for this php to make it shorter.
  
 ## Detailed API
-* Uploading Avatar: No API provided yet, but one can post to `Special:UploadAvatar` (or its localized equivalent). The only form data required is `avatar`, which should be set to the data uri of the image.
+* Uploading Avatar: While logged in, submit a POST to `Special:UploadAvatar` (or its localized equivalent) with the image data URI in `avatar` and the `wpEditToken` from the upload form.
 * Displaying Avatar: This extension provides an entry point for MediaWiki `avatar.php`. This entry point produces result via a 302 redirect. This approach is used to maximize performance while still utilizing MediaWiki core. There are currently 4 available arguments.
     * `user` set to the user of who you want to enquery the avatar
     * `res` the preferred resolution of the avatar. Note that this is only a hint and the actual result might not be of the resolution. This parameter is valid only if `user` is set.

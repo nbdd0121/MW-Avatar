@@ -8,30 +8,20 @@ class Thumbnail {
 	public $height;
 	public $type;
 
-	private function __construct($url) {
-		$imageInfo = getimagesize($url);
+	private function __construct(\GdImage $image, array $imageInfo) {
 		list($this->width, $this->height, $this->type) = $imageInfo;
-
-		switch ($this->type) {
-		case IMAGETYPE_GIF:
-			$this->image = imagecreatefromgif($url);
-			break;
-		case IMAGETYPE_PNG:
-			$this->image = imagecreatefrompng($url);
-			break;
-		case IMAGETYPE_JPEG:
-			$this->image = imagecreatefromjpeg($url);
-			break;
-		}
+		$this->image = $image;
 	}
 
-	public static function open($url) {
-		return new self($url);
-	}
-
-	public function cleanup() {
-		imagedestroy($this->image);
-		$this->image = null;
+	public static function open($url, ?array $imageInfo = null): ?self {
+		$imageInfo ??= @getimagesize($url);
+		$image = match ($imageInfo[2] ?? null) {
+			IMAGETYPE_GIF => @imagecreatefromgif($url),
+			IMAGETYPE_PNG => @imagecreatefrompng($url),
+			IMAGETYPE_JPEG => @imagecreatefromjpeg($url),
+			default => false,
+		};
+		return $image ? new self($image, $imageInfo) : null;
 	}
 
 	public function createThumbnail($dimension, $file) {
@@ -45,10 +35,18 @@ class Thumbnail {
 		imagefill($thumb, 0, 0, $transparent);
 		imagecopyresampled($thumb, $this->image, 0, 0, 0, 0, $dimension, $dimension, $this->width, $this->height);
 
-		if (!imagepng($thumb, $file)) {
-			throw new \Exception('Failed to save image ' . $file);
+		$tempFile = tempnam(dirname($file), '.avatar-');
+		if ($tempFile === false) {
+			throw new \RuntimeException('Could not create a temporary avatar file');
 		}
-
-		imagedestroy($thumb);
+		try {
+			if (!imagepng($thumb, $tempFile) || !chmod($tempFile, 0644) || !rename($tempFile, $file)) {
+				throw new \RuntimeException('Failed to save image ' . $file);
+			}
+		} finally {
+			if (is_file($tempFile)) {
+				unlink($tempFile);
+			}
+		}
 	}
 }

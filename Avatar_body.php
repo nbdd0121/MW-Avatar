@@ -1,16 +1,17 @@
 <?php
 namespace Avatar;
 
+use MediaWiki\User\UserIdentity;
+
 class Avatars {
 
 	public static function getLinkFor($username, $res = false) {
 		global $wgScriptPath;
-		$path = "$wgScriptPath/extensions/Avatar/avatar.php?user=$username";
+		$query = ['user' => $username];
 		if ($res !== false) {
-			return $path . '&res=' . $res;
-		} else {
-			return $path;
+			$query['res'] = $res;
 		}
+		return "$wgScriptPath/extensions/Avatar/avatar.php?" . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
 	}
 
 	public static function normalizeResolution($res) {
@@ -29,12 +30,11 @@ class Avatars {
 		return 'original';
 	}
 
-	public static function getAvatar(\User $user, $res) {
-		global $wgDefaultAvatarRes;
+	public static function getAvatar(UserIdentity $user, $res) {
 		$path = null;
 
 		// If user exists
-		if ($user && $user->getId()) {
+		if ($user->getId()) {
 			global $wgAvatarUploadDirectory;
 			$avatarPath = "/{$user->getId()}/$res.png";
 
@@ -46,9 +46,10 @@ class Avatars {
 				$originalAvatarPath = "/{$user->getId()}/original.png";
 				if (file_exists($wgAvatarUploadDirectory . $originalAvatarPath)) {
 					$image = Thumbnail::open($wgAvatarUploadDirectory . $originalAvatarPath);
-					$image->createThumbnail($res, $wgAvatarUploadDirectory . $avatarPath);
-					$image->cleanup();
-					$path = $avatarPath;
+					if ($image !== null) {
+						$image->createThumbnail($res, $wgAvatarUploadDirectory . $avatarPath);
+						$path = $avatarPath;
+					}
 				}
 			}
 		}
@@ -56,12 +57,11 @@ class Avatars {
 		return $path;
 	}
 
-	public static function hasAvatar(\User $user) {
-		global $wgDefaultAvatar;
+	public static function hasAvatar(UserIdentity $user) {
 		return self::getAvatar($user, 'original') !== null;
 	}
 
-	public static function deleteAvatar(\User $user) {
+	public static function deleteAvatar(UserIdentity $user) {
 		global $wgAvatarUploadDirectory;
 		$dirPath = $wgAvatarUploadDirectory . "/{$user->getId()}/";
 		if (!is_dir($dirPath)) {

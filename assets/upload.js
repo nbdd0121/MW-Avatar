@@ -16,14 +16,15 @@ var startX;
 var startY;
 
 // Objects
-var submitButton = $('[type=submit]');
-var currentAvatar = $('<div>').append($('<img class="current-avatar">').attr('src', mw.config.get('wgScriptPath') + '/extensions/Avatar/avatar.php?user=' + mw.user.id() + '&res=original&nocache&ver=' + Math.floor(Date.now()/1000).toString(16)));
+var uploadForm = $('#avatar-upload-form');
+var submitButton = uploadForm.find('[type=submit]');
+var currentAvatar = $('<div>').append($('<img class="current-avatar" alt="">').attr('src', mw.config.get('wgAvatarCurrentPreviewUrl')));
 var container = $('<div class="cropper-container" disabled=""/>');
 var imageObj = $('<img src=""></img>');
 var selector = $('<div class="cropper"><div class="tl-resizer"/><div class="tr-resizer"/><div class="bl-resizer"/><div class="br-resizer"/><div class="round-preview"/></div>');
 var msgBelow = $('<p>').text(mw.msg('uploadavatar-nofile'));
-var hiddenField = $('[name=avatar]');
-var pickfile = $('#pickfile');
+var hiddenField = uploadForm.find('[name=avatar]');
+var filePicker = uploadForm.find('#avatar-file');
 var errorMsg = $('#errorMsg');
 var roundPreview = selector.find('.round-preview');
 
@@ -274,21 +275,17 @@ selector.find('.br-resizer').on('mousedown', function(event) {
   onDragStart(event);
 });
 
-pickfile.click(function(event) {
-  var picker = $('<input type="file"/>');
-  picker.change(function(event) {
-    var file = event.target.files[0];
-    if (file) {
-      var reader = new FileReader();
-      reader.onloadend = function() {
-        imageObj.width('auto').height('auto');
-        imageObj.attr('src', reader.result);
-      }
-      reader.readAsDataURL(file);
-    }
-  });
-  picker.click();
-  event.preventDefault();
+filePicker.on('change', function(event) {
+  var file = event.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function() {
+    imageObj.width('auto').height('auto');
+    imageObj.attr('src', reader.result);
+  };
+  reader.readAsDataURL(file);
 });
 
 imageObj
