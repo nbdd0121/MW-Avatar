@@ -5,8 +5,8 @@ use MediaWiki\Context\RequestContext;
 use MediaWiki\EntryPointEnvironment;
 use MediaWiki\MediaWikiServices;
 
-// Resolve from the served path so an extension symlink still uses the wiki's core.
-$wikiRoot = dirname($_SERVER['SCRIPT_FILENAME'], 3);
+// Prefer an explicit install root when the server resolves extension symlinks.
+$wikiRoot = getenv('MW_INSTALL_PATH') ?: dirname($_SERVER['SCRIPT_FILENAME'], 3);
 define('MW_ENTRY_POINT', 'index');
 require $wikiRoot . '/includes/WebStart.php';
 

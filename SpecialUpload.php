@@ -92,16 +92,7 @@ class SpecialUpload extends SpecialPage {
 		}
 
 		$user = $this->getUser();
-		$uploadDir = $config->get('AvatarUploadDirectory') . '/' . $user->getId() . '/';
-		if (!is_dir($uploadDir) && !@mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
-			throw new \RuntimeException('Could not create the avatar upload directory');
-		}
-		$image->createThumbnail($maxResolution, $uploadDir . 'original.png');
-		foreach (glob($uploadDir . '[0-9]*.png') ?: [] as $file) {
-			unlink($file);
-		}
-		$defaultResolution = $config->get('DefaultAvatarRes');
-		$image->createThumbnail($defaultResolution, $uploadDir . $defaultResolution . '.png');
+		Avatars::storeAvatar($user, $image, $maxResolution);
 
 		$logEntry = new ManualLogEntry('avatar', 'upload');
 		$logEntry->setPerformer($user);
