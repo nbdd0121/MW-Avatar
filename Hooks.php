@@ -28,7 +28,7 @@ class Hooks {
 		return true;
 	}
 	
-	public static function onSidebarBeforeOutput(Skin $skin, &$sidebar) {
+	public static function onSidebarBeforeOutput(Skin $skin, &$sidebar): void {
 		$user = $skin->getRelevantUser();
 		
 		if ($user) {

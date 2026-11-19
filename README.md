@@ -5,7 +5,7 @@ Yet another avatar architecture for MediaWiki
 
 ## Install
 
-* Use MediaWiki 1.47 (or its release candidate) and PHP with GD, PNG, JPEG, and GIF support.
+* Use MediaWiki 1.45 or later and PHP with GD, PNG, JPEG, and GIF support.
 * Install the extension in `extensions/Avatar`.
 * Add `wfLoadExtension( 'Avatar' );` to `LocalSettings.php`.
 * Give the web server write access to the avatar upload directory.
